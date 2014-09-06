@@ -28,32 +28,32 @@ class Location(models.Model):
     coords = geomodels.PointField()
     polygon = geomodels.PolygonField()
     
-def Privacy(models.Model):
+class Privacy(models.Model):
     hidden = models.BooleanField(default=True)
 
-def Donor(models.Model):
+class Donor(models.Model):
     donated = models.DecimalField(default=0.00,decimal_places=2)
     donations = models.ManyToOneField(Donation)
 
-def Donation(models.Model):
+class Donation(models.Model):
     donor = ForeignKey(Donor)
     amount = models.DecimalField(default=0.00,decimal_places=2)
     recipient = models.ManyToManyField(Organization)
 
-def Project(models.Model):
+class Project(models.Model):
     title = models.CharField()
     description = models.CharField(null=True, blank=True)
     
-def Link(models.Model):
+class Link(models.Model):
     url = URLField()
     title = Model.Charfield(null=True, blank=True)
 
-def YouTubeVideo(models.Model)
+class YouTubeVideo(models.Model)
     url = Models.URLField(null=True, blank=True)
 
-def FacebookPage(models.Model):
+class FacebookPage(models.Model):
     url = Models.URLField(null=True, blank=True)
 
-def Twitter(models.Model):
+class Twitter(models.Model):
     handle = Models.CharField(null=True, Blank=True)
     url = Models.URLField(default = "", null=True, blank=True)
