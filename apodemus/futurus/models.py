@@ -7,11 +7,11 @@ class Organization(models.Model):
     name = models.CharField()
     slug = models.SlugField(unique=True)
     logo = models.ImageField(upload_to="futurus/static/futurus/images/", blank=True, null=True)
-    notable_members = models.ManyToManyField(Person)
+    notable_members = models.ManyToManyField('Person')
     entry_created = models.DateTimeField()
     organization_created = models.DateTimeField(null=True, blank=True)
-    links = models.ManyToManyField(Link)
-    projects = models.ManyToManyField(Project)
+    links = models.ManyToManyField('Link')
+    projects = models.ManyToManyField('Project')
     
     def __str__(self):
         return self.name
@@ -29,7 +29,7 @@ class Membership(models.Model):
 
 class Biography(models.Model):
     name = models.CharField(null=True, blank=True)
-    hometown = models.ManyToManyField(Location)
+    hometown = models.ManyToManyField('Location')
 
     def __str__(self):
         return self.name + "'s Biography"
@@ -51,12 +51,12 @@ class Privacy(models.Model):
 
 class Donor(models.Model):
     donated = models.DecimalField(default=0.00,decimal_places=2)
-    donations = models.ManyToOneField(Donation)
+    donations = models.ManyToOneField('Donation')
 
 class Donation(models.Model):
     donor = ForeignKey(Donor)
     amount = models.DecimalField(default=0.00,decimal_places=2)
-    recipient = models.ManyToManyField(Organization)
+    recipient = models.ManyToManyField('Organization')
 
 class Project(models.Model):
     title = models.CharField()
