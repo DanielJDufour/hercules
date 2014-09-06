@@ -1,5 +1,5 @@
 from django.contrib import admin
-from futurus.models import Organization, Membership, Biography, Location, Privacy, Donor, Donation, Project, Link, YoutTubeVideo, FacebookPage, Twitter
+from futurus.models import Organization, Membership, Biography, Location, Privacy, Donor, Donation, Project, Link, YouTubeVideo, FacebookPage, Twitter
 
 class OrganizationAdmin(admin.ModelAdmin):
   prepopulated_fields = {'slug': ('name',)}
