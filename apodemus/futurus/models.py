@@ -50,7 +50,7 @@ class Privacy(models.Model):
     hidden = models.BooleanField(default=True)
 
 class Donor(models.Model):
-    donated = models.DecimalField(default=0.00,decimal_places=2)
+    donated = models.DecimalField(max_digits=100, default=0.00,decimal_places=2)
 
 class Donation(models.Model):
     donor = models.ForeignKey(Donor)
