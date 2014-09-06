@@ -12,6 +12,11 @@ class Organization(models.Model):
     organization_created = models.DateTimeField(null=True, blank=True)
     links = models.ManyToManyField(Link)
     projects = models.ManyToManyField(Project)
+    
+    def __str__(self):
+        return self.name
+    class Meta:
+        ordering = ['name']
 
 class Membership(models.Model):
     organization = models.ForeignKey(Organization)
@@ -23,10 +28,20 @@ class Biography(models.Model)
     name = models.CharField(null=True, blank=True)
     hometown = models.ManyToManyField(Location)
 
+    def __str__(self):
+        return self.name + "'s Biography'
+    class Meta:
+        ordering = ['name']
+
 class Location(models.Model):
     name = models.CharField()
     coords = geomodels.PointField()
     polygon = geomodels.PolygonField()
+
+    def __str__(self):
+        return self.name
+    class Meta:
+        ordering = ['name']
     
 class Privacy(models.Model):
     hidden = models.BooleanField(default=True)
@@ -43,6 +58,10 @@ class Donation(models.Model):
 class Project(models.Model):
     title = models.CharField()
     description = models.CharField(null=True, blank=True)
+    def __str__(self):
+        return self.title
+    class Meta:
+        ordering = ['title']
     
 class Link(models.Model):
     url = URLField()
