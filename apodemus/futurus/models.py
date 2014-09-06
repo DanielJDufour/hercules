@@ -67,7 +67,7 @@ class Link(models.Model):
     url = URLField()
     title = Model.Charfield(null=True, blank=True)
 
-class YouTubeVideo(models.Model)
+class YouTubeVideo(models.Model):
     url = Models.URLField(null=True, blank=True)
 
 class FacebookPage(models.Model):
