@@ -51,7 +51,6 @@ class Privacy(models.Model):
 
 class Donor(models.Model):
     donated = models.DecimalField(default=0.00,decimal_places=2)
-    donations = models.ManyToOneField('Donation')
 
 class Donation(models.Model):
     donor = ForeignKey(Donor)
