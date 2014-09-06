@@ -29,7 +29,7 @@ class Biography(models.Model):
     hometown = models.ManyToManyField(Location)
 
     def __str__(self):
-        return self.name + "'s Biography'
+        return self.name + "'s Biography"
     class Meta:
         ordering = ['name']
 
