@@ -4,7 +4,7 @@ from django.db import models
 class Organization(models.Model):
     bricked = models.BooleanField(default=False)
     hidden = models.BooleanField(default=False)
-    name = models.CharField()
+    name = models.CharField(max_length=200)
     slug = models.SlugField(unique=True)
     logo = models.ImageField(upload_to="futurus/static/futurus/images/", blank=True, null=True)
     notable_members = models.ManyToManyField('Person')
@@ -24,11 +24,11 @@ class Person(models.Model):
 class Membership(models.Model):
     organization = models.ForeignKey(Organization)
     person = models.ForeignKey(Person)
-    position = models.CharField(null=True, blank=True)
-    description = models.CharField(null=True, blank=True)
+    position = models.CharField(max_length=200, null=True, blank=True)
+    description = models.CharField(max_length=200, null=True, blank=True)
 
 class Biography(models.Model):
-    name = models.CharField(null=True, blank=True)
+    name = models.CharField(max_length=200, null=True, blank=True)
     hometown = models.ManyToManyField('Location')
 
     def __str__(self):
@@ -37,7 +37,7 @@ class Biography(models.Model):
         ordering = ['name']
 
 class Location(models.Model):
-    name = models.CharField()
+    name = models.CharField(max_length=200)
 #    coords = geomodels.PointField()
 #    polygon = geomodels.PolygonField()
 
@@ -54,12 +54,12 @@ class Donor(models.Model):
 
 class Donation(models.Model):
     donor = models.ForeignKey(Donor)
-    amount = models.DecimalField(default=0.00,decimal_places=2)
+    amount = models.DecimalField(max_digits=100, default=0.00,decimal_places=2)
     recipient = models.ManyToManyField('Organization')
 
 class Project(models.Model):
-    title = models.CharField()
-    description = models.CharField(null=True, blank=True)
+    title = models.CharField(max_length=200)
+    description = models.CharField(max_length=200, null=True, blank=True)
     def __str__(self):
         return self.title
     class Meta:
@@ -67,7 +67,7 @@ class Project(models.Model):
     
 class Link(models.Model):
     url = models.URLField()
-    title = models.CharField(null=True, blank=True)
+    title = models.CharField(max_length=200, null=True, blank=True)
 
 class YouTubeVideo(models.Model):
     url = models.URLField(null=True, blank=True)
@@ -76,5 +76,5 @@ class FacebookPage(models.Model):
     url = models.URLField(null=True, blank=True)
 
 class Twitter(models.Model):
-    handle = models.CharField(null=True, blank=True)
+    handle = models.CharField(max_length=200, null=True, blank=True)
     url = models.URLField(default = "", null=True, blank=True)
