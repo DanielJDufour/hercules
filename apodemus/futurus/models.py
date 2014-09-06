@@ -24,6 +24,9 @@ class Membership(models.Model):
     position = models.CharField(null=True, blank=True)
     description = models.CharField(null=True, blank=True)
 
+class Person(models.Model):
+    biography = models.OneToOneField(Biography)
+
 class Biography(models.Model):
     name = models.CharField(null=True, blank=True)
     hometown = models.ManyToManyField(Location)
