@@ -67,7 +67,7 @@ class Project(models.Model):
     
 class Link(models.Model):
     url = models.URLField()
-    title = models.Charfield(null=True, blank=True)
+    title = models.CharField(null=True, blank=True)
 
 class YouTubeVideo(models.Model):
     url = models.URLField(null=True, blank=True)
