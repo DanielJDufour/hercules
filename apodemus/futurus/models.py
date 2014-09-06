@@ -18,14 +18,14 @@ class Organization(models.Model):
     class Meta:
         ordering = ['name']
 
+class Person(models.Model):
+    biography = models.OneToOneField(Biography)
+
 class Membership(models.Model):
     organization = models.ForeignKey(Organization)
     person = models.ForeignKey(Person)
     position = models.CharField(null=True, blank=True)
     description = models.CharField(null=True, blank=True)
-
-class Person(models.Model):
-    biography = models.OneToOneField(Biography)
 
 class Biography(models.Model):
     name = models.CharField(null=True, blank=True)
