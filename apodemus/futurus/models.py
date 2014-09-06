@@ -53,7 +53,7 @@ class Donor(models.Model):
     donated = models.DecimalField(default=0.00,decimal_places=2)
 
 class Donation(models.Model):
-    donor = ForeignKey(Donor)
+    donor = models.ForeignKey(Donor)
     amount = models.DecimalField(default=0.00,decimal_places=2)
     recipient = models.ManyToManyField('Organization')
 
