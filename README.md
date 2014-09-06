@@ -47,3 +47,21 @@ sudo pip install -e ~/django-trunk/
 ```
 git clone http://github.com/danieljdufour/apodemus.git ~/apodemus
 ```
+
+####Create Database (db) Tables
+The following command creates the tables needed by the INSTALLED_APPS found in ~/apodemus/apodemus/apodemus/settings.py.  ```sudo -u postgres``` makes it so you run the command as the postgres user, which has a role to access the database. 
+```
+sudo python ~/apodemus/apodemus/manage.py makemigrations
+sudo -u postgres python ~/apodemus/apodemus/manage.py migrate
+
+####Run the Development Server
+```
+sudo -u postgres python ~/apodemus/apodemus/manage.py runserver
+```
+
+####Create Admin User
+The following command will prompt you for a username and email address.
+Enter ```admin``` as username and enter your email address.
+And enter your password twice.
+```
+sudo -u postgres python ~/apodemus/apodemus/manage.py createsuperuser;
