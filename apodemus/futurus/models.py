@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.gis.db import models as geomodels
+#from django.contrib.gis.db import models as geomodels
 
 class Organization(models.Model):
     bricked = models.BooleanField(default=False)
@@ -35,8 +35,8 @@ class Biography(models.Model):
 
 class Location(models.Model):
     name = models.CharField()
-    coords = geomodels.PointField()
-    polygon = geomodels.PolygonField()
+#    coords = geomodels.PointField()
+#    polygon = geomodels.PolygonField()
 
     def __str__(self):
         return self.name
