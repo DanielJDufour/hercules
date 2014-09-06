@@ -66,14 +66,14 @@ class Project(models.Model):
         ordering = ['title']
     
 class Link(models.Model):
-    url = URLField()
-    title = Model.Charfield(null=True, blank=True)
+    url = models.URLField()
+    title = models.Charfield(null=True, blank=True)
 
 class YouTubeVideo(models.Model):
-    url = Models.URLField(null=True, blank=True)
+    url = models.URLField(null=True, blank=True)
 
 class FacebookPage(models.Model):
-    url = Models.URLField(null=True, blank=True)
+    url = models.URLField(null=True, blank=True)
 
 class Twitter(models.Model):
     handle = Models.CharField(null=True, Blank=True)
