@@ -1,0 +1,21 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html>
+<head>
+<title>Futurus Crowdfunding Website</title>
+<link rel="stylesheet" type="text/css" href="{% static 'dataportal/style.css' %}" />
+<link rel="stylesheet" type="text/css" href="https://raw.githubusercontent.com/necolas/normalize.css/master/normalize.css" />
+<link rel = "icon" type = "image/ico" href="logo.ico"/>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+</head>
+<body>
+{% include "futurus/header.html" %}
+<div id = "middle">
+{% block content %}
+{% endblock %}
+</div>
+{% include "futurus/footer.html" %}
+</body>
+</html>
