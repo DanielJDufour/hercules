@@ -76,5 +76,5 @@ class FacebookPage(models.Model):
     url = models.URLField(null=True, blank=True)
 
 class Twitter(models.Model):
-    handle = models.CharField(null=True, Blank=True)
+    handle = models.CharField(null=True, blank=True)
     url = models.URLField(default = "", null=True, blank=True)
