@@ -19,7 +19,7 @@ class Organization(models.Model):
         ordering = ['name']
 
 class Person(models.Model):
-    biography = models.OneToOneField(Biography)
+    biography = models.OneToOneField('Biography')
 
 class Membership(models.Model):
     organization = models.ForeignKey(Organization)
