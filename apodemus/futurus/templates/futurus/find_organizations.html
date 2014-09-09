@@ -1,0 +1,27 @@
+{% extends "futurus/base.html" %}
+{% block content %}
+{% load staticfiles %}
+<script src="{% static 'futurus/search.js' %}"></script>
+<label for="search">Search</label>
+<input type="text" class="form-control" id="search" placeholder="What do you want to search for?">
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Logo</th>
+            <th>Notable Members</th>
+            <th>Projects</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for organization in organizations %}
+        <tr>
+            <td>{{ organization.name }}</td>
+            <td><img src="{% static '{{organization.logo.url}}' %}" class = "img-responsive"></td>
+            <td>{% for person in organization.notable_members.all %}<a class="btn btn-primary btn-xs btn-margin-xs" href={% url 'person' person.slug %} role="button">{{ person.name }}</a>{% endfor %}</td>
+            <td>{% for project in organization.projects.all %}<a class="btn btn-primary btn-xs btn-margin-xs" href={% url 'project' project.slug %} role="button">{{ project.title }}</a>{% endfor %}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

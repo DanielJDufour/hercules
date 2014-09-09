@@ -1,0 +1,63 @@
+{% extends "futurus/base.html" %}
+{% block content %}
+{% load staticfiles %}
+<h1>{{ project.title }}</h1>
+</br>
+
+{% if project.organization_set.all %}
+<h4>Participating Organizations</h4>
+<div class="row">
+{% for organization in project.organization_set.all %}
+  <div class="col-xs-6 col-md-3">
+    <a class="thumbnail" href={% url 'organization' organization.slug %}>
+      <img data-src="" alt="">
+      <div class="caption">
+        <h5>{{ organization.name }}</h5>
+      </div>
+    </a>
+  </div>
+{% endfor %}
+</div>
+{% endif %}
+
+{% if project.description %}
+<h4>Project Description</h4>
+<div class="well">{{project.description}}</div>
+{% endif %}
+
+{% if organization.partners.all %}
+<h4>Project Partners</h4>
+<div class="row">
+{% for partner in organization.partners.all %}
+  <div class="col-xs-6 col-md-3">
+    <a class="thumbnail" href={% url 'project' partner.slug %}>
+      <img data-src="" alt="">
+      <div class="caption">
+        <h5>{{partner.name}}</h5>
+      </div>
+    </a>
+  </div>
+{% endfor %}
+</div>
+{% endif %}
+
+{% if project.steps.all %}
+<h4>Project Steps</h4>
+<div class="panel-group" id="accordion">
+{% for step in project.steps.all %}
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h4 class="panel-title">
+        <a data-toggle="collapse" data-parent="#accordion" href="#collapse{{ forloop.counter }}">{{ forloop.counter }}| {{ step.title }}</a>
+      </h4>
+    </div>
+    <div id="collapse{{ forloop.counter }}" class="panel-collapse collapse">
+      <div class="panel-body">{{ step.description }}</div>
+    </div>
+  </div>
+{% endfor %}
+</div>
+{% endif %}
+
+
+{% endblock %}

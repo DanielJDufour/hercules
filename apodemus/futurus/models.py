@@ -1,25 +1,42 @@
 from django.db import models
 #from django.contrib.gis.db import models as geomodels
+from django.db.models.signals import m2m_changed
 
 class Organization(models.Model):
     bricked = models.BooleanField(default=False)
-    hidden = models.BooleanField(default=False)
+    hidden = models.BooleanField(default=True)
     name = models.CharField(max_length=200)
+    abbreviation = models.CharField(max_length=200, blank=True, null=True)
     slug = models.SlugField(unique=True)
-    logo = models.ImageField(upload_to="futurus/static/futurus/images/", blank=True, null=True)
-    notable_members = models.ManyToManyField('Person')
-    entry_created = models.DateTimeField()
-    organization_created = models.DateTimeField(null=True, blank=True)
-    links = models.ManyToManyField('Link')
-    projects = models.ManyToManyField('Project')
-    
+    logo = models.ImageField(upload_to="/images/logos/", blank=True, null=True)
+    notable_members = models.ManyToManyField('Person', blank=True)
+    entry_created = models.DateTimeField(auto_now_add=True)
+    organization_created = models.DateField(null=True, blank=True)
+    links = models.ManyToManyField('Link', blank=True)
+    projects = models.ManyToManyField('Project', blank=True)
+    partners = models.ManyToManyField('Organization', blank=True)
+
+    def updatePartners(self, instance):
+        print "about to try to clear"
+        instance.partners.clear()
+        print self.partners.all()
+        print "tried to clear"
+#        relatedOrgs = []
+#        for project in self.projects.all():
+#            relatedOrgs.extend(project.organization_set.exclude(id=self.id))
+#        relatedOrgsDistinct = list(set(relatedOrgs))
+#        print relatedOrgsDistinct
+#        self.partners.add(*relatedOrgsDistinct)
+        
+
     def __str__(self):
         return self.name
     class Meta:
         ordering = ['name']
 
 class Person(models.Model):
-    biography = models.OneToOneField('Biography')
+    name = models.CharField(max_length=200)
+    biography = models.OneToOneField('Biography', blank=True)
 
 class Membership(models.Model):
     organization = models.ForeignKey(Organization)
@@ -28,13 +45,11 @@ class Membership(models.Model):
     description = models.CharField(max_length=200, null=True, blank=True)
 
 class Biography(models.Model):
-    name = models.CharField(max_length=200, null=True, blank=True)
+    description = models.TextField(null=True, blank=True)
     hometown = models.ManyToManyField('Location')
 
     def __str__(self):
-        return self.name + "'s Biography"
-    class Meta:
-        ordering = ['name']
+        return person.name + "'s Biography"
 
 class Location(models.Model):
     name = models.CharField(max_length=200)
@@ -59,11 +74,21 @@ class Donation(models.Model):
 
 class Project(models.Model):
     title = models.CharField(max_length=200)
+    slug = models.SlugField(unique=True, blank=True, null=True)
     description = models.CharField(max_length=200, null=True, blank=True)
+    steps = models.ManyToManyField('Step', blank=True)
+
     def __str__(self):
         return self.title
     class Meta:
         ordering = ['title']
+
+class Step(models.Model):
+    title = models.CharField(max_length=200)
+    completed = models.BooleanField(default=False)
+    description = models.TextField(null=True, blank=True)
+    def __str__(self):
+        return self.title
     
 class Link(models.Model):
     url = models.URLField()
@@ -78,3 +103,12 @@ class FacebookPage(models.Model):
 class Twitter(models.Model):
     handle = models.CharField(max_length=200, null=True, blank=True)
     url = models.URLField(default = "", null=True, blank=True)
+
+def updatePartners(sender, instance, **kwargs):
+    print "updating partners"    
+    #instance.save()
+    #instance.partners.remove()
+    #instance.updatePartners(instance)
+    #instance.save()
+
+m2m_changed.connect(updatePartners, sender=Organization.projects.through)
