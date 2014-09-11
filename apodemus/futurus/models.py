@@ -1,6 +1,7 @@
 from django.db import models
 #from django.contrib.gis.db import models as geomodels
 from django.db.models.signals import m2m_changed
+from django.contrib.auth.models import User
 
 class Organization(models.Model):
     bricked = models.BooleanField(default=False)
@@ -8,13 +9,15 @@ class Organization(models.Model):
     name = models.CharField(max_length=200)
     abbreviation = models.CharField(max_length=200, blank=True, null=True)
     slug = models.SlugField(unique=True)
-    logo = models.ImageField(upload_to="/images/logos/", blank=True, null=True)
-    notable_members = models.ManyToManyField('Person', blank=True)
+    logo = models.ImageField(upload_to="images/logos", blank=True, null=True)
     entry_created = models.DateTimeField(auto_now_add=True)
     organization_created = models.DateField(null=True, blank=True)
+#    members = models.ManyToManyField('Person', blank=True, null=True)
     links = models.ManyToManyField('Link', blank=True)
     projects = models.ManyToManyField('Project', blank=True)
     partners = models.ManyToManyField('Organization', blank=True)
+    twitter = models.OneToOneField('Twitter', null=True, blank=True)
+    facebook = models.OneToOneField('Facebook', null=True, blank=True)
 
     def updatePartners(self, instance):
         print "about to try to clear"
@@ -35,8 +38,13 @@ class Organization(models.Model):
         ordering = ['name']
 
 class Person(models.Model):
+    user = models.ForeignKey(User, blank=True, null=True)
     name = models.CharField(max_length=200)
     biography = models.OneToOneField('Biography', blank=True)
+
+class Donor(models.Model):
+    user = models.ForeignKey(User, unique=True, null=True)
+    donated = models.DecimalField(max_digits=100, default=0.00,decimal_places=2)
 
 class Membership(models.Model):
     organization = models.ForeignKey(Organization)
@@ -45,8 +53,9 @@ class Membership(models.Model):
     description = models.CharField(max_length=200, null=True, blank=True)
 
 class Biography(models.Model):
+    pic = models.ImageField(upload_to="images/biopics", blank=True, null=True)
     description = models.TextField(null=True, blank=True)
-    hometown = models.ManyToManyField('Location')
+    hometown = models.ManyToManyField('Location', null=True, blank=True)
 
     def __str__(self):
         return person.name + "'s Biography"
@@ -63,9 +72,6 @@ class Location(models.Model):
     
 class Privacy(models.Model):
     hidden = models.BooleanField(default=True)
-
-class Donor(models.Model):
-    donated = models.DecimalField(max_digits=100, default=0.00,decimal_places=2)
 
 class Donation(models.Model):
     donor = models.ForeignKey(Donor)
@@ -97,7 +103,7 @@ class Link(models.Model):
 class YouTubeVideo(models.Model):
     url = models.URLField(null=True, blank=True)
 
-class FacebookPage(models.Model):
+class Facebook(models.Model):
     url = models.URLField(null=True, blank=True)
 
 class Twitter(models.Model):
