@@ -14,6 +14,7 @@ urlpatterns = patterns(
     url(r'^admin/', include(admin.site.urls)),
     url(r'orgs/(?P<slug>[^\.]+)', views.organization, name='organization'),
     url(r'projects/(?P<slug>[^\.]+)', views.project, name='project'),
+    url(r'people/(?P<slug>[^\.]+)', views.person, name='person'),
 ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 """
 if settings.DEBUG:

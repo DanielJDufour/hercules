@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404
-from futurus.models import Organization, Project
+from futurus.models import Organization, Project, Person
 from django.conf import settings
 
 def index(request):
@@ -14,7 +14,8 @@ def find_projects(request):
     return render(request, 'futurus/find_projects.html', {'projects': projects})
 
 def find_people(request):
-    return render(request, 'futurus/find_people.html')
+    people = Person.objects.all()
+    return render(request, 'futurus/find_people.html', {'people': people})
 
 def organization(request, slug):
     organization = get_object_or_404(Organization, slug=slug)
@@ -23,3 +24,8 @@ def organization(request, slug):
 def project(request, slug):
     project = get_object_or_404(Project, slug=slug)
     return render(request, 'futurus/project.html', {'zone': settings.ZONE, 'project': project})
+
+def person(request, slug):
+    person = get_object_or_404(Person, slug=slug)
+    #organizations = person.organization_set.all
+    return render(request, 'futurus/person.html', {'zone': settings.ZONE, 'person': person})

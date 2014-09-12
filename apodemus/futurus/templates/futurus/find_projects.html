@@ -1,27 +1,27 @@
 {% extends "futurus/base.html" %}
 {% block content %}
+{% load staticfiles %}
+<script src="{% static 'futurus/search.js' %}"></script>
+<label for="search">Search</label>
+<input type="text" class="form-control" id="search" placeholder="Who do you want to search for?">
 <table class="table table-striped">
-	<thead>
-              <tr>
-                <th>Name</th>
-                <th>Logo</th>
-                <th>Notable Members</th>
-                <th>Projects</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>2</td>
-                <td>Jacob</td>
-                <td>Thornton</td>
-                <td>@fat</td>
-              </tr>
-              <tr>
-                <td>3</td>
-                <td>Larry</td>
-                <td>the Bird</td>
-                <td>@twitter</td>
-              </tr>
-        </tbody>
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Organization(s)</th>
+            <th>Steps</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for project in projects %}
+        <tr>
+            <td><a href = {% url 'project' project.slug %}>{{ project.title }}</a></td>
+            <td>{% for organization in project.organization_set.all %}<a class="btn btn-primary btn-xs btn-margin-xs" href="{% url 'organization' organization.slug %}" role="button">{{ organization.name }}</a>{% endfor %}</td>
+            <td>{% for step in project.steps.all %}
+{% if forloop.first == False %} > {% endif %}
+{{ step.title }}{% endfor %}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
 </table>
 {% endblock %}

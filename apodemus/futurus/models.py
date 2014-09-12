@@ -17,20 +17,7 @@ class Organization(models.Model):
     projects = models.ManyToManyField('Project', blank=True)
     partners = models.ManyToManyField('Organization', blank=True)
     twitter = models.OneToOneField('Twitter', null=True, blank=True)
-    facebook = models.OneToOneField('Facebook', null=True, blank=True)
-
-    def updatePartners(self, instance):
-        print "about to try to clear"
-        instance.partners.clear()
-        print self.partners.all()
-        print "tried to clear"
-#        relatedOrgs = []
-#        for project in self.projects.all():
-#            relatedOrgs.extend(project.organization_set.exclude(id=self.id))
-#        relatedOrgsDistinct = list(set(relatedOrgs))
-#        print relatedOrgsDistinct
-#        self.partners.add(*relatedOrgsDistinct)
-        
+    facebook = models.OneToOneField('Facebook', null=True, blank=True)    
 
     def __str__(self):
         return self.name
@@ -40,7 +27,14 @@ class Organization(models.Model):
 class Person(models.Model):
     user = models.ForeignKey(User, blank=True, null=True)
     name = models.CharField(max_length=200)
-    biography = models.OneToOneField('Biography', blank=True)
+    slug = models.SlugField(unique=True)
+    pic = models.ImageField(upload_to="images/biopics", blank=True, null=True)
+    story = models.TextField(null=True, blank=True)
+    hometown = models.ManyToManyField('Location', blank=True)
+    twitter = models.OneToOneField('Twitter', null=True, blank=True)
+    facebook = models.OneToOneField('Facebook', null=True, blank=True)
+    def __str__(self):
+        return self.name
 
 class Donor(models.Model):
     user = models.ForeignKey(User, unique=True, null=True)
@@ -51,14 +45,6 @@ class Membership(models.Model):
     person = models.ForeignKey(Person)
     position = models.CharField(max_length=200, null=True, blank=True)
     description = models.CharField(max_length=200, null=True, blank=True)
-
-class Biography(models.Model):
-    pic = models.ImageField(upload_to="images/biopics", blank=True, null=True)
-    description = models.TextField(null=True, blank=True)
-    hometown = models.ManyToManyField('Location', null=True, blank=True)
-
-    def __str__(self):
-        return person.name + "'s Biography"
 
 class Location(models.Model):
     name = models.CharField(max_length=200)

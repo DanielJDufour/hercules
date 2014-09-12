@@ -17,7 +17,7 @@
         {% for organization in organizations %}
         <tr>
             <td>{{ organization.name }}</td>
-            <td><img src="{% static '{{organization.logo.url}}' %}" class = "img-responsive"></td>
+            <td><img src="{{ organization.logo.url }}" class = "img-responsive" style="max-height: 50px;"></td>
             <td>{% for person in organization.notable_members.all %}<a class="btn btn-primary btn-xs btn-margin-xs" href={% url 'person' person.slug %} role="button">{{ person.name }}</a>{% endfor %}</td>
             <td>{% for project in organization.projects.all %}<a class="btn btn-primary btn-xs btn-margin-xs" href={% url 'project' project.slug %} role="button">{{ project.title }}</a>{% endfor %}</td>
         </tr>

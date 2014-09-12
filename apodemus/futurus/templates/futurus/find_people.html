@@ -1,27 +1,27 @@
 {% extends "futurus/base.html" %}
 {% block content %}
+{% load staticfiles %}
+<script src="{% static 'futurus/search.js' %}"></script>
+<label for="search">Search</label>
+<input type="text" class="form-control" id="search" placeholder="Who do you want to search for?">
 <table class="table table-striped">
-	<thead>
-              <tr>
-                <th>Name</th>
-                <th>Logo</th>
-                <th>Notable Members</th>
-                <th>Projects</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>2</td>
-                <td>Jacob</td>
-                <td>Thornton</td>
-                <td>@fat</td>
-              </tr>
-              <tr>
-                <td>3</td>
-                <td>Larry</td>
-                <td>the Bird</td>
-                <td>@twitter</td>
-              </tr>
-        </tbody>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Pic</th>
+            <th>Memberships</th>
+            <th>Donation</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for person in people %}
+        <tr>
+            <td>{{ person.name }}</td>
+            <td><img src="{{ person.pic.url }}" class = "img-responsive" style="max-height: 50px;"></td>
+            <td>{% for membership in memberships %}<a class="btn btn-primary btn-xs btn-margin-xs" href={% url 'membership' project.slug %} role="button">{{ project.title }}</a>{% endfor %}</td>
+            <td>$0.00</td>
+        </tr>
+        {% endfor %}
+    </tbody>
 </table>
 {% endblock %}
