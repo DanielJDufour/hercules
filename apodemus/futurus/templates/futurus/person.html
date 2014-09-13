@@ -1,0 +1,17 @@
+{% extends "futurus/base.html" %}
+{% block content %}
+{% load staticfiles %}
+<h1>{{ person.name }}</h1>
+{{ person.user }}
+
+</br>
+{% if person.pic %}<img src="{{ person.pic.url }}" class="img-responsive" alt="Responsive image" style ="max-height: 100px;">{% endif %}
+<a>Update Picture</a>
+
+</br>
+{% if person.membership_set %}
+<h4>Background</h4>
+<div class="well" style="-webkit-columns: 300px; -moz-columns: 300px; columns: 300px;">{{person.story}}</div>
+{% endif %}
+
+{% endblock %}

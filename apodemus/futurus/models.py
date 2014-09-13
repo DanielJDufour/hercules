@@ -25,7 +25,7 @@ class Organization(models.Model):
         ordering = ['name']
 
 class Person(models.Model):
-    user = models.ForeignKey(User, blank=True, null=True)
+    user = models.OneToOneField(User, blank=True)
     name = models.CharField(max_length=200)
     slug = models.SlugField(unique=True)
     pic = models.ImageField(upload_to="images/biopics", blank=True, null=True)

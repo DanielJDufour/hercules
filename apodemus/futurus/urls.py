@@ -13,5 +13,7 @@ urlpatterns = patterns(
     url(r'orgs/(?P<slug>[^\.]+)', views.organization, name='organization'),
     url(r'projects/(?P<slug>[^\.]+)', views.project, name='project'),
     url(r'people/(?P<slug>[^\.]+)', views.person, name='person'),
+    url(r'register/', views.register, name='register'),
+    url(r'login/', views.user_login, name='login'),
+    url(r'logout/', views.user_logout, name='logout'),
 ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-
