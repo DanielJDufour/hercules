@@ -49,9 +49,9 @@ sudo -u postgres psql -c "CREATE USER changemaker;";
 sudo -u postgres psql -c "CREATE DATABASE horizon;"
 sudo -u postgres psql -c "ALTER DATABASE horizon OWNER TO changemaker;"
 ```
-```
 
 ####Change to changemaker user
+It will ask for the password, which you gave after running passwd.
 ```
 su changemaker -p;
 ```
