@@ -64,7 +64,7 @@ WSGI_APPLICATION = 'apodemus.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'apodemus',
+        'NAME': 'horizon',
     }
 }
 
