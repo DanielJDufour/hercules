@@ -1,7 +1,9 @@
 ###Archimedes Installation Guide
-Archimedes = name of the repository
-Apodemus = name of the Django project
-Futurus = name of the Django app
+* Archimedes = name of the repository
+* Apodemus = name of the Django project
+* Futurus = name of the Django app
+* Horizon = name of the database
+* Changemaker = name of the user that runs all this
 
 ####Update
 ```
