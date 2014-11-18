@@ -76,14 +76,15 @@ python ~/hercules/apodemus/manage.py makemigrations;
 python ~/hercules/apodemus/manage.py migrate;
 ```
 
-####Run the Development Server
-```
-python ~/hercules/apodemus/manage.py runserver
-```
-
 ####Create Admin User
 The following command will prompt you for a username and email address.
 Enter ```admin``` as username and enter your email address.
 And enter your password twice.
 ```
-postgres python ~/apodemus/apodemus/manage.py createsuperuser;
+python ~/hercules/apodemus/manage.py createsuperuser;
+```
+
+####Run the Development Server
+```
+python ~/hercules/apodemus/manage.py runserver
+```
