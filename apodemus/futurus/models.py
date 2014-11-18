@@ -16,8 +16,9 @@ class Organization(models.Model):
     links = models.ManyToManyField('Link', blank=True)
     projects = models.ManyToManyField('Project', blank=True)
     partners = models.ManyToManyField('Organization', blank=True)
-    twitter = models.OneToOneField('Twitter', null=True, blank=True)
-    facebook = models.OneToOneField('Facebook', null=True, blank=True)    
+    facebook = models.CharField(max_length=200, null=True, blank=True)
+    twitter = models.CharField(max_length=200, null=True, blank=True)
+    linkedin = models.CharField(max_length=200, null=True, blank=True) 
 
     def __str__(self):
         return self.name
@@ -83,11 +84,21 @@ class Step(models.Model):
         return self.title
     
 class Link(models.Model):
-    url = models.URLField()
     title = models.CharField(max_length=200, null=True, blank=True)
-
-class YouTubeVideo(models.Model):
     url = models.URLField(null=True, blank=True)
+    def __str__(self):
+        return self.title
+    class Meta:
+        ordering = ['title']
+
+class Video(models.Model):
+    title = models.CharField(max_length=200, null=True, blank=True)
+    url = models.URLField(null=True, blank=True)
+    embed = models.TextField(default="",null=True,blank=True)
+    def __str__(self):
+        return self.title
+    class Meta:
+        ordering = ['title']
 
 class Facebook(models.Model):
     url = models.URLField(null=True, blank=True)
@@ -96,6 +107,16 @@ class Twitter(models.Model):
     handle = models.CharField(max_length=200, null=True, blank=True)
     url = models.URLField(default = "", null=True, blank=True)
 
+class TeamMember(models.Model):
+    name = models.CharField(max_length=200, null=True, blank=True)
+    title = models.CharField(max_length=200, null=True, blank=True)
+    bio = models.TextField(null=True, blank=True)
+    picture = models.ImageField(upload_to="images", null=True, blank=True, default=settings.STATIC_URL+"skyshaker/img/user/default.jpg")
+    def __str__(self):
+        return self.name
+    class Meta:
+        ordering = ['name']
+
 def updatePartners(sender, instance, **kwargs):
     print "updating partners"    
     #instance.save()
@@ -103,4 +124,18 @@ def updatePartners(sender, instance, **kwargs):
     #instance.updatePartners(instance)
     #instance.save()
 
+def updateVideoEmbed(sender, instance, **kwargs):
+    instance_url = str(instance.url)
+    if 'youtube' in instance_url:
+        idOfYoutubeVideo = re.search('(?<=v=)\w+', instance_url).group(0)
+        instance.embed = '<iframe width="100%" height="315" src="//www.youtube.com/embed/' + idOfYoutubeVideo + '" frameborder="0" allowfullscreen></iframe>'
+    elif 'vimeo' in instance.url:
+        idOfVimeoVideo = re.search('(?<=com/)\w+', instance_url).group(0)
+        instance.embed = '<iframe src="//player.vimeo.com/video/' + idOfVimeoVideo + '" width="500" height="281" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>'
+    post_save.disconnect(updateVideoEmbed, sender=Video)
+    instance.save()
+    post_save.connect(updateVideoEmbed, sender=Video)
+
+
 m2m_changed.connect(updatePartners, sender=Organization.projects.through)
+post_save.connect(updateVideoEmbed, sender=Video)
