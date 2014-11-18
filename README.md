@@ -72,7 +72,8 @@ pip install -r ~/hercules/requirements.txt --user
 makemigrations creates the instructions for the database
 migrate actually runs those instructions
 ```
-python ~/hercules/apodemus/manage.py makemigrations && python ~/hercules/apodemus/manage.py migrate
+python ~/hercules/apodemus/manage.py makemigrations;
+python ~/hercules/apodemus/manage.py migrate;
 ```
 
 ####Run the Development Server
