@@ -62,19 +62,22 @@ git clone http://github.com/danieljdufour/hercules.git ~/hercules
 ```
 
 ####Install Python Packages
+The -r lets you install python packages to changemaker's directory and not the system directory.
 ```
 pip install -r ~/hercules/requirements.txt
 ```
 
-####Create Database (db) Tables
-The following command creates the tables needed by the INSTALLED_APPS found in ~/apodemus/apodemus/apodemus/settings.py.  ```sudo -u postgres``` makes it so you run the command as the postgres user, which has a role to access the database. 
+####Create Tables in Database
+makemigrations creates the instructions for the database
+migrate actually runs those instructions
 ```
-sudo python ~/apodemus/apodemus/manage.py makemigrations
-sudo -u postgres python ~/apodemus/apodemus/manage.py migrate
+python ~/apodemus/apodemus/manage.py makemigrations
+python ~/apodemus/apodemus/manage.py migrate
+```
 
 ####Run the Development Server
 ```
-sudo -u postgres python ~/apodemus/apodemus/manage.py runserver
+python ~/apodemus/apodemus/manage.py runserver
 ```
 
 ####Create Admin User
@@ -82,4 +85,4 @@ The following command will prompt you for a username and email address.
 Enter ```admin``` as username and enter your email address.
 And enter your password twice.
 ```
-sudo -u postgres python ~/apodemus/apodemus/manage.py createsuperuser;
+postgres python ~/apodemus/apodemus/manage.py createsuperuser;
