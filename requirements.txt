@@ -1,5 +1,4 @@
 beautifulsoup4
 django
-imagehash
 psycopg2
 python-social-auth
