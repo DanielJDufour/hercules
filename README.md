@@ -63,8 +63,9 @@ git clone http://github.com/danieljdufour/hercules.git ~/hercules
 
 ####Install Python Packages
 The -r lets you install python packages to changemaker's directory and not the system directory.
+We add --user at the end to force everything, especially python-social-auth, to install everything under changemaker and not the system superuser.
 ```
-pip install -r ~/hercules/requirements.txt
+pip install -r ~/hercules/requirements.txt --user
 ```
 
 ####Create Tables in Database
