@@ -1,0 +1,14 @@
+*,html,body{margin: 0; border; 0; padding: 0; box-sizing: border-box; -moz-box-sizing: border-box;}
+header{width: 100%;}
+#header1{background-color: rgba(25,25,25,.75); font-weight: bold; color: rgb(200,220,50);}
+#header2 {padding: 5px; position: fixed; width: 100%; background-color: rgba(25,10,25,.8);}
+#header2 img {height: 50px; width: 50px;}
+.header-group{display: inline-block; vertical-align: top; background-color: green; border: 1px solid black; min-width: 125px; padding: 5px; border-radius: 5px; cursor: pointer;}
+.header-group:last-child{position: absolute; right: 15px;}
+#header2 label{display: block; width: 100%; cursor: pointer;}
+#header2 input{display: none;}
+#header2 input ~ a{display: none;}
+#header2 input:checked ~ a{display:block;}
+
+footer{position: fixed; bottom: 0; width: 100%; background-color: rgba(15,15,15,.8); color: white; text-align: center;}
+footer a{color: rgb(25,255,25); text-decoration: none;}

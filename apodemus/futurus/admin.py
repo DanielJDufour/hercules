@@ -1,5 +1,5 @@
 from django.contrib import admin
-from futurus.models import Organization, Membership, Location, Privacy, Donor, Donation, Project, Link, YouTubeVideo, Facebook, Twitter, Person, Step
+from futurus.models import Organization, Membership, Location, Privacy, Donor, Donation, Project, Link, Video, Person, Step
 
 class OrganizationAdmin(admin.ModelAdmin):
   prepopulated_fields = {'slug': ('name',)}
@@ -22,6 +22,4 @@ admin.site.register(Privacy)
 admin.site.register(Donor)
 admin.site.register(Donation)
 admin.site.register(Link)
-admin.site.register(YouTubeVideo)
-admin.site.register(Facebook)
-admin.site.register(Twitter)
+admin.site.register(Video)

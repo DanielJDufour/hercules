@@ -3,26 +3,20 @@
 <html>
 <head>
 <title>Futurus Crowdfunding Website</title>
-<link rel="stylesheet" type="text/css" href="https://raw.githubusercontent.com/necolas/normalize.css/master/normalize.css" />
+<!--<link rel="stylesheet" type="text/css" href="https://raw.githubusercontent.com/necolas/normalize.css/master/normalize.css" />-->
 <link rel = "icon" type = "image/ico" href="logo.ico"/>
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
-<script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
 <link rel="stylesheet" type="text/css" href="{% static 'futurus/custom.css' %}" />
 </head>
 <body>
 {% include "futurus/header.html" %}
 <noscript>
-<div class="alert alert-warning alert-dismissible" role="alert">
-<button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-<strong>Warning!</strong>JavaScript is not enabled.
+<input type="radio" id="base-noscript-warning">
+<div>
+Warning! JavaScript is not enabled.
 </div>
 </noscript>
-<div id = "middle">
 {% block content %}
 {% endblock %}
-</div>
 {% include "futurus/footer.html" %}
 </body>
 </html>
