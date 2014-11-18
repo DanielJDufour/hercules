@@ -1,4 +1,7 @@
-###Apodemus Installation Guide
+###Archimedes Installation Guide
+Archimedes = name of the repository
+Apodemus = name of the Django project
+Futurus = name of the Django app
 
 ####Update
 ```
@@ -19,10 +22,25 @@ sudo apt-get install -y curl vim git postgresql libpq-dev postgresql-server-dev-
 * python-dev:
 * python-pip: is used to install python packages
 
-####Create Database
-You will now create the databse that the Django app will use.  The database is called apodemus.
+####Create Local User
+Create the user named changemaker, who will actually run the Django app.
+The -m at the end tells it to create a home directory for the changemaker user.
 ```
-sudo -u postgres createdb apodemus;
+sudo useradd changemaker -m && sudo passwd changemaker;
+```
+
+Create changemaker user to Postgres
+```
+sudo -u postgres psql -c "CREATE USER changemaker;";
+```
+
+####Create Database
+You will now create the databse that the Django app will use.
+The database is called horizon.
+The second line sets the owner of the database to changemaker
+```
+sudo -u postgres -c "CREATE DATABASE horizon;"
+sudo -u postgres -c "ALTER DATABASE horizon OWNER TO changemaker;"
 ```
 
 ###Install Psycopg
