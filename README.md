@@ -53,7 +53,7 @@ sudo pip install psycopg2;
 ####Download Django
 The following code will download the django code into the current user's home directory. 
 ```
-git clone http://github.com/django/django.git ~/django-trunk
+sudo -u changemaker git clone http://github.com/django/django.git /home/changemaker/django-trunk
 ```
 
 ####Make Django Code Importable
