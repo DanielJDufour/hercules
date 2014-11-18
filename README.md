@@ -1,9 +1,18 @@
-###Archimedes Installation Guide
-* Archimedes = name of the repository
+###Hercules Installation Guide
+* Hercules = name of the repository
 * Apodemus = name of the Django project
 * Futurus = name of the Django app
 * Horizon = name of the database
 * Changemaker = name of the user that runs all this
+
+###Python Packages Installed 
+* Psycopg is a PostgreSQL database adapater for Python
+* beautifulsoup4 is used for web scraping
+* django is the framework that runs the site
+* imagehash is used for image recognition and analysis
+* psycopg2 connects the Django site to the database
+* python-social-auth is used so people can login via Facebook, Google and other things
+
 
 ####Update
 ```
@@ -31,40 +40,30 @@ The -m at the end tells it to create a home directory for the changemaker user.
 sudo useradd changemaker -m && sudo passwd changemaker;
 ```
 
-Create changemaker user to Postgres
+####Set Up Database
+Create a changemaker user in the database
+Create a database
+Make changemaker owner of that database
 ```
 sudo -u postgres psql -c "CREATE USER changemaker;";
-```
-
-####Create Database
-You will now create the database named horizon that the Django app will use.
-After that, you change the owner of the database to changemaker
-```
 sudo -u postgres psql -c "CREATE DATABASE horizon;"
 sudo -u postgres psql -c "ALTER DATABASE horizon OWNER TO changemaker;"
 ```
-
-###Install Psycopg
-Psycopg is a PostgreSQL database adapater for Python
-```
-sudo pip install psycopg2;
 ```
 
-####Download Django
-The following code will download the django code into the current user's home directory. 
+####Change to changemaker user
 ```
-sudo -u changemaker git clone http://github.com/django/django.git /home/changemaker/django-trunk
-```
-
-####Make Django Code Importable
-Make Django code importable into Python with the following
-```
-sudo pip install -e ~/django-trunk/
+su changemaker -p;
 ```
 
-####Download This Repo
+####Download this repository of code
 ```
-git clone http://github.com/danieljdufour/apodemus.git ~/apodemus
+git clone http://github.com/danieljdufour/hercules.git ~/hercules
+```
+
+####Install Python Packages
+```
+pip install /hercules/requirements.txt
 ```
 
 ####Create Database (db) Tables
