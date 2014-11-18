@@ -63,7 +63,7 @@ git clone http://github.com/danieljdufour/hercules.git ~/hercules
 
 ####Install Python Packages
 ```
-pip install ~/hercules/requirements.txt
+pip install -r ~/hercules/requirements.txt
 ```
 
 ####Create Database (db) Tables
