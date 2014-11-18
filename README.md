@@ -37,12 +37,10 @@ sudo -u postgres psql -c "CREATE USER changemaker;";
 ```
 
 ####Create Database
-You will now create the databse that the Django app will use.
-The database is called horizon.
-The second line sets the owner of the database to changemaker
+You will now create the database named horizon that the Django app will use.
+After that, you change the owner of the database to changemaker
 ```
-sudo -u postgres -c "CREATE DATABASE horizon;"
-sudo -u postgres -c "ALTER DATABASE horizon OWNER TO changemaker;"
+sudo -u postgres -c "CREATE DATABASE horizon && sudo -u postgres -c "ALTER DATABASE horizon OWNER TO changemaker;"
 ```
 
 ###Install Psycopg
