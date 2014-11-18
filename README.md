@@ -78,7 +78,7 @@ python ~/hercules/apodemus/manage.py migrate;
 
 ####Run the Development Server
 ```
-python ~/apodemus/apodemus/manage.py runserver
+python ~/hercules/apodemus/manage.py runserver
 ```
 
 ####Create Admin User
