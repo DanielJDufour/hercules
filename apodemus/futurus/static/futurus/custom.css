@@ -1,14 +1,22 @@
 *,html,body{margin: 0; border; 0; padding: 0; box-sizing: border-box; -moz-box-sizing: border-box;}
 header{width: 100%;}
 #header1{background-color: rgba(25,25,25,.75); font-weight: bold; color: rgb(200,220,50);}
-#header2 {padding: 5px; position: fixed; width: 100%; background-color: rgba(25,10,25,.8);}
+#header2 {position: fixed; width: 100%; min-height: 30px;}
 #header2 img {height: 50px; width: 50px;}
-.header-group{display: inline-block; vertical-align: top; background-color: green; border: 1px solid black; min-width: 125px; padding: 5px; border-radius: 5px; cursor: pointer;}
+#header2 > a, .header-group{display: inline-block; vertical-align: top; min-width: 125px; padding: 5px; cursor: pointer; margin-right: -5px;}
+#header2 > a:hover, .header-group:hover, input:checked + .header-group{}
 .header-group:last-child{position: absolute; right: 15px;}
 #header2 label{display: block; width: 100%; cursor: pointer;}
 #header2 input{display: none;}
-#header2 input ~ a{display: none;}
-#header2 input:checked ~ a{display:block;}
+#header2 input + .header-group a{display: none;}
+#header2 input:checked + .header-group a{display:block;}
+#header2 a, #header2 label{color: white; text-decoration: none;}
+
+#header2 > #header-home{background-color: rgba(255,0,0,.9);}
+#header-group-browse{background-color: rgba(0,255,0,.9);}
+#header-group-search{background-color: rgba(0,0,255,.9);}
+#header-group-more{background-color: rgba(0,255,255,.9);}
+#header-group-join{backgrond-color: rgba(255,0,255,.9);}
 
 footer{position: fixed; bottom: 0; width: 100%; background-color: rgba(15,15,15,.8); color: white; text-align: center;}
 footer a{color: rgb(25,255,25); text-decoration: none;}

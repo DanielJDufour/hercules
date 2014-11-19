@@ -4,39 +4,39 @@
 {{ zone }} Crowdfunding and Making a Difference Platform
 </header>-->
 <header id="header2">
-<a id="header-home" href="{% url 'index' %}"><img src="{% static 'futurus/img/brand.png' %}"></a>
+<a id="header-home" href="{% url 'index' %}"><!--<img src="{% static 'futurus/img/brand.png' %}">-->Home</a>
 
-<div class="header-group">
-<label for="header-option-browse">Browse</label>
 <input type="checkbox" name="header" id="header-option-browse">
+<div id="header-group-browse" class="header-group">
+<label for="header-option-browse">Browse</label>
 <a id="header-option-browse-organizations">Organizations</a>
 <a id="header-option-browse-organizations">Projects</a>
 <a id="header-option-browse-organizations">People</a>
 </div>
 
-<div class="header-group">
-<label for="header-option-find">Search</label>
 <input type="checkbox" name="header" id="header-option-find">
+<div id="header-group-search" class="header-group">
+<label for="header-option-find">Search</label>
 <a id="header-option-find-organizations" href="{% url 'find_organizations' %}">Organizations</a>
 <a id="header-option-find-organizations" href="{% url 'find_projects' %}">Projects</a>
 <a id="header-option-find-organizations" href="{% url 'find_people' %}">People</a>
 </div>
 
-<div class="header-group">
-<label for="header-option-more">More</label>
 <input type="checkbox" name="header" id="header-option-more">
+<div id="header-group-more" class="header-group">
+<label for="header-option-more">More</label>
 <a id="header-option-more-about" href="{% url 'find_organizations' %}">About</a>
 <a id="header-option-more-contact" href="{% url 'find_projects' %}">Contact</a>
 </div>
 
 
 
-<div class="header-group">
 {% if user.is_authenticated %}
 <a href="/logout">Logout</a>
 {% else %}
-<label for="header-option-join">Join</label>
 <input type="checkbox" name="header" id="header-option-join">
+<div class="header-group">
+<label for="header-option-join">Join</label>
 <a id="header-option-join-register" href="/register">Register</a>
 <a id="header-option-join-login" href="/login">Login</a>
 </div>
