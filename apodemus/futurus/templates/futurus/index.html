@@ -1,7 +1,7 @@
 {% extends "futurus/base.html" %}
 {% block content %}
-<div>
-  <h1>Hello{% if user.is_authenticated %}, {{ user.username }}{% endif %}!</h1>
+<div class="jumbotron">
+  <h1>Hello{% if user.is_authenticated%}, User{% endif %}!</h1>
   <p>The name Armenia enters English via Latin, from Ancient Greek Ἀρμενία. The Armenian endonym for the Armenian people and country is hayer and hayk’, respectively. The exact etymology of the name is unknown, and there are various speculative attempts to connect it to older toponyms or ethnonyms.
 
 Contents
@@ -27,5 +27,5 @@ From Armanî, Armânum, Ermenen, Urmenu or Minni
 It has been suggested by early 20th century Armenologists that Old Persian Armina and the Greek Armenoi are continuations of an Assyrian toponym Armânum or Armanî.[3] There are certain Bronze Age records identified with the toponym in both Mesopotamian and Egyptian sources. The earliest is from an inscription which mentions Armânum together with Ibla (Ebla) as territories conquered by Naram-Sin of Akkad in ca. 2250 BC[4] identified with an Akkadian colony in the Diarbekr region.[5] However, many historians, such as Wayne Horowitz, identify Armanî which was conquered by Naram-Sin of Akkad, with the Syrian city of Aleppo and not with the Armenian Highland.[6]
 
 Another mention by pharaoh Thutmose III of Egypt in the 33rd year of his reign</p>
-</div>
+</div><!-- end jumbotron"
 {% endblock %}

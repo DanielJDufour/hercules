@@ -48,7 +48,7 @@ class Organization(models.Model):
     logo = models.ImageField(upload_to="images/logos", blank=True, null=True)
     entry_created = models.DateTimeField(auto_now_add=True)
     organization_created = models.DateField(null=True, blank=True)
-#    members = models.ManyToManyField('Person', blank=True, null=True)
+    members = models.ManyToManyField('Person', through='Membership')
     links = models.ManyToManyField('Link', blank=True)
     projects = models.ManyToManyField('Project', blank=True)
     partners = models.ManyToManyField('Organization', blank=True)
@@ -62,7 +62,8 @@ class Organization(models.Model):
         ordering = ['name']
 
 class Person(models.Model):
-    user = models.OneToOneField(User, blank=True)
+    user = models.OneToOneField(User, blank=True, null=True)
+    notable = models.NullBooleanField(blank=True, null=True, default=False)
     name = models.CharField(max_length=200)
     slug = models.SlugField(unique=True)
     pic = models.ImageField(upload_to="images/biopics", blank=True, null=True)
@@ -81,7 +82,7 @@ class Privacy(models.Model):
 class Project(models.Model):
     title = models.CharField(max_length=200)
     slug = models.SlugField(unique=True, blank=True, null=True)
-    description = models.CharField(max_length=200, null=True, blank=True)
+    description = models.TextField(null=True, blank=True)
     steps = models.ManyToManyField('Step', blank=True)
 
     def __str__(self):
@@ -90,11 +91,11 @@ class Project(models.Model):
         ordering = ['title']
 
 class Step(models.Model):
-    title = models.CharField(max_length=200)
+    name = models.CharField(max_length=200)
     completed = models.BooleanField(default=False)
     description = models.TextField(null=True, blank=True)
     def __str__(self):
-        return self.title
+        return self.name
     
 class Video(models.Model):
     title = models.CharField(max_length=200, null=True, blank=True)

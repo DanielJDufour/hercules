@@ -49,10 +49,9 @@ def register(request):
         # Attempt to grab information from the raw form information.
         # Note that we make use of both UserForm and UserProfileForm.
         user_form = UserForm(data=request.POST)
-        person_form = PersonForm(data=request.POST)
 
         # If the two forms are valid...
-        if user_form.is_valid() and person_form.is_valid():
+        if user_form.is_valid():
             # Save the user's form data to the database.
             user = user_form.save()
 
@@ -61,39 +60,29 @@ def register(request):
             user.set_password(user.password)
             user.save()
 
-            # Now sort out the Person instance.
-            # Since we need to set the user attribute ourselves, we set commit=False.
-            # This delays saving the model until we're ready to avoid integrity problems.
-            person = person_form.save(commit=False)
-            person.user = user
-
-            # Did the user provide a profile picture?
-            # If so, we need to get it from the input form and put it in the UserProfile model.
-            if 'picture' in request.FILES:
-                person.picture = request.FILES['picture']
-
-            # Now we save the UserProfile model instance.
-            person.save()
-
             # Update our variable to tell the template registration was successful.
             registered = True
+
+            # Now auto-login after registering
+            # See: http://stackoverflow.com/questions/2787650/manually-logging-in-a-user-without-password
+            user.backend = 'django.contrib.auth.backends.ModelBackend'
+            login(request, user)
 
         # Invalid form or forms - mistakes or something else?
         # Print problems to the terminal.
         # They'll also be shown to the user.
         else:
-            print user_form.errors, person_form.errors
+            print user_form.errors
 
     # Not a HTTP POST, so we render our form using two ModelForm instances.
     # These forms will be blank, ready for user input.
     else:
         user_form = UserForm()
-        person_form = PersonForm()
 
     # Render the template depending on the context.
     return render_to_response(
             'futurus/register.html',
-            {'user_form': user_form, 'person_form': person_form, 'registered': registered},
+            {'user_form': user_form, 'registered': registered},
             context)
 
 def user_login(request):
@@ -104,12 +93,12 @@ def user_login(request):
     if request.method == 'POST':
         # Gather the username and password provided by the user.
         # This information is obtained from the login form.
-        username = request.POST['username']
+        email = request.POST['email']
         password = request.POST['password']
 
         # Use Django's machinery to attempt to see if the username/password
         # combination is valid - a User object is returned if it is.
-        user = authenticate(username=username, password=password)
+        user = authenticate(email=email, password=password)
 
         # If we have a User object, the details are correct.
         # If None (Python's way of representing the absence of a value), no user

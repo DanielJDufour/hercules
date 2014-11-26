@@ -1,20 +1,92 @@
 {% extends "futurus/base.html" %}
+{% load staticfiles %}
 {% block content %}
+<div class="middle">
 {% if registered %}
-<script>window.location = "../.."</script>
-<noscript>
-<strong>Thank you for registering!</strong>
-<a href="/">Click here to return to the homepage.</a><br/>
-</noscript>
+<h1>Congratulations.  You have successfully registered.</h1>
+<p>
+To create your profile, click <a href="">here</a>.
+</p>
+<p>
+To return to the main page, click <a href="{% url 'index' %}">here</a>.
+</p>
 {% else %}
-<strong>Register here!</strong><br/>
-<form id="user_form" method="post" action="/futurus/register/" enctype="multipart/form-data">
+<h1>Register here!</h1><br/>
+<form id="user_form" method="post" action="/futurus/register/" enctype="multipart/form-data" role="form">
 {% csrf_token %}
-<!-- Display each form. The as_p method wraps each element in a paragraph(<p>) element. This ensures each element appears on a new line, making everything look neater. -->
-{{ user_form.as_p }}
-{{ person_form.as_p }}
+<div id="form-group-email" class="form-group">
+    <label for="id_email">Email</label>
+    <input id="id_email" type="email" name="email" maxlength="100" class="form-control" placeholder="Enter your email address here">
+</div>
+<div id="form-group-password" class="form-group">
+    <label for="id_password">Password</label>
+    <input id="id_password" type="password" name="password" class="form-control" placeholder="Enter your new password here">
+</div>
+<div id="form-group-password2" class="form-group">
+    <label for="id_password2">Password Confirmation</label>
+    <input id="id_password2" type="password" name="password2" class="form-control" placeholder="Enter your new password a second time to make sure you type it in right">
+</div>
 <!-- Provide a button to click to submit the form. -->
 <input type="submit" name="submit" value="Register" />
 </form>
 {% endif %}
+<script>
+$(document).ready(function(){
+    var vs = "warn";
+    $("input[type=password]").keyup(function(){
+        console.log("validing password confirmation");
+        p1val = document.getElementById("id_password").value;
+        p2val = document.getElementById("id_password2").value;
+
+        console.log("vs is " + vs);
+        if (vs === "warn")
+        {
+            console.log('vs === "warn"');
+            if(p1val.length === p2val.length)
+            {
+                console.log("p1val.length === p2val.length");
+                if(p1val === p2val)
+                {
+                    console.log("p1val === p2val"); 
+                    vs = "success";
+                }
+                else
+                {
+                    console.log("p1val != p2val"); 
+                    vs === "error";
+                }
+            }
+        }
+        else //if (vs === "success" || vs === "error")
+        {
+            if(p1val === p2val)
+            {
+                vs = "success";
+            }
+            else
+            {
+                vs = "error";
+            }
+        }
+
+        if (vs === "warn")
+        {
+            $("#form-group-password2").addClass("has-warning");
+        }
+        else if (vs === "success")
+        {
+            $("#form-group-password2").removeClass("has-warning");
+            $("#form-group-password2").removeClass("has-error");
+            $("#form-group-password2").addClass("has-success");
+        }
+        else if (vs === "error")
+        {
+            $("#form-group-password2").removeClass("has-warning");
+            $("#form-group-password2").addClass("has-error");
+            $("#form-group-password2").removeClass("has-success");
+        }
+    });
+});
+</script>
+</div> <!-- end .middle -->
 {% endblock %}
