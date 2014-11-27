@@ -16,15 +16,15 @@ To return to the main page, click <a href="{% url 'index' %}">here</a>.
 {% csrf_token %}
 <div id="form-group-email" class="form-group">
     <label for="id_email">Email</label>
-    <input id="id_email" type="email" name="email" maxlength="100" class="form-control" placeholder="Enter your email address here">
+    <input id="id_email" type="email" name="email" maxlength="100" class="form-control" placeholder="Enter your email address here" required="required">
 </div>
 <div id="form-group-password" class="form-group">
     <label for="id_password">Password</label>
-    <input id="id_password" type="password" name="password" class="form-control" placeholder="Enter your new password here">
+    <input id="id_password" type="password" name="password" class="form-control" placeholder="Enter your new password here" required="required">
 </div>
 <div id="form-group-password2" class="form-group">
     <label for="id_password2">Password Confirmation</label>
-    <input id="id_password2" type="password" name="password2" class="form-control" placeholder="Enter your new password a second time to make sure you type it in right">
+    <input id="id_password2" type="password" name="password2" class="form-control" placeholder="Enter your new password a second time to make sure you type it in right" required="required">
 </div>
 <!-- Provide a button to click to submit the form. -->
 <input type="submit" name="submit" value="Register" />
@@ -32,6 +32,13 @@ To return to the main page, click <a href="{% url 'index' %}">here</a>.
 {% endif %}
 <script>
 $(document).ready(function(){
+    document.getElementsByTagName("form")[0].onsubmit = function(){
+        if (document.getElementById("id_password").value === document.getElementById("id_password2").value){return true;}
+        else{alert("The passwords you entered do not match."); return false;}
+    };
+
+
+
     var vs = "warn";
     $("input[type=password]").keyup(function(){
         console.log("validing password confirmation");

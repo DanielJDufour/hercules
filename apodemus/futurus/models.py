@@ -3,6 +3,8 @@ from django.db import models
 #from django.contrib.gis.db import models as geomodels
 from django.db.models.signals import m2m_changed, post_save
 from django.contrib.auth.models import User
+import re, requests
+from bs4 import BeautifulSoup
 
 class Donation(models.Model):
     donor = models.ForeignKey('Donor', null=True, blank=True)
@@ -55,6 +57,8 @@ class Organization(models.Model):
     facebook = models.CharField(max_length=200, null=True, blank=True)
     twitter = models.CharField(max_length=200, null=True, blank=True)
     linkedin = models.CharField(max_length=200, null=True, blank=True) 
+    wiki = models.CharField(max_length=200, null=True, blank=True)
+
 
     def __str__(self):
         return self.name
@@ -68,9 +72,32 @@ class Person(models.Model):
     slug = models.SlugField(unique=True)
     pic = models.ImageField(upload_to="images/biopics", blank=True, null=True)
     story = models.TextField(null=True, blank=True)
-    hometown = models.ManyToManyField('Location', blank=True)
-    facebook = models.CharField(max_length=200, null=True, blank=True)
+    hometown = models.CharField(max_length=200, null=True, blank=True)
+    facebook_url = models.URLField(max_length=200, null=True, blank=True)
+    facebook_title = models.CharField(max_length=200, null=True, blank=True)
     twitter = models.CharField(max_length=200, null=True, blank=True)
+    wiki_title = models.CharField(max_length=200, null=True, blank=True)
+    wiki_url = models.URLField(max_length=200, null=True, blank=True)
+    def update(self):
+        self.updateFacebook()
+        self.updateWiki()
+    def updateFacebook(self):
+        print "starting updateWiki"
+        print "facebook_url is", self.facebook_url
+        if self.facebook_url == "":
+            self.facebook_title = ""
+        else:
+            self.facebook_title = BeautifulSoup(requests.get(self.facebook_url).content).title.string.split(" -")[0].strip() 
+            self.save()
+    def updateWiki(self):
+        print "starting updateWiki"
+
+        print "wiki_url is", self.wiki_url
+        if self.wiki_url == "":
+            self.wiki_title = ""
+        else:
+            self.wiki_title = re.search('(?<=wiki\/)\w+', self.wiki_url).group(0)
+            self.save()
     def __str__(self):
         return self.name
     class Meta:

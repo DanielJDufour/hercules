@@ -4,11 +4,33 @@ from django.conf import settings
 from futurus.forms import UserForm, PersonForm
 from django.template import RequestContext
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.models import User
 from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth.decorators import login_required
 
 def index(request):
     return render(request, 'futurus/index.html', {'zone': settings.ZONE})
+
+@login_required
+def edit_person(request, slug):
+    person = get_object_or_404(Person, slug=slug)
+    if request.user == person.user:
+        context = RequestContext(request)
+        print "person is ", person
+        if request.method == "POST":
+            print "request.method == 'POST'"
+            form = PersonForm(data=request.POST, instance=person)
+            if form.is_valid():
+                form.save()
+                person.update()
+                return HttpResponseRedirect("/people/"+slug)
+            else:
+                print form.errors
+        else:
+            form = PersonForm()
+        return render(request, 'futurus/edit_person.html', {'zone': settings.ZONE, 'person': person, 'form': form})
+    else: #this isn't the current user's profile
+        return HttpResponseRedirect("/people/"+slug)
 
 def find_organizations(request):
     organizations = Organization.objects.all()
@@ -96,26 +118,18 @@ def user_login(request):
         email = request.POST['email']
         password = request.POST['password']
 
-        # Use Django's machinery to attempt to see if the username/password
-        # combination is valid - a User object is returned if it is.
-        user = authenticate(email=email, password=password)
-
-        # If we have a User object, the details are correct.
-        # If None (Python's way of representing the absence of a value), no user
-        # with matching credentials was found.
-        if user:
-            # Is the account active? It could have been disabled.
-            if user.is_active:
-                # If the account is valid and active, we can log the user in.
-                # We'll send the user back to the homepage.
-                login(request, user)
-                return HttpResponseRedirect('/')
-            else:
-                # An inactive account was used - no logging in!
-                return HttpResponse("Your Futurus account is disabled.")
+        # Wrote custom login with email, not username
+        try:
+            user = User.objects.get(email=email)
+        except:
+            # no user by that email found
+            print "There is no user by that email."
+            return render_to_response('futurus/login.html', {}, context)
+        if user and user.check_password(password) and user.is_active:
+            user.backend = 'django.contrib.auth.backends.ModelBackend'
+            login(request, user)
+            return HttpResponseRedirect('/')
         else:
-            # Bad login details were provided. So we can't log the user in.
-            print "Invalid login details: {0}, {1}".format(username, password)
             return HttpResponse("Invalid login details supplied.")
 
     # The request is not a HTTP POST, so display the login form.

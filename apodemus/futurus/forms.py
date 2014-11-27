@@ -11,5 +11,5 @@ class UserForm(forms.ModelForm):
 class PersonForm(forms.ModelForm):
     class Meta:
         model = Person
-        fields = ('name', 'pic', 'story', 'hometown', 'twitter', 'facebook')
+        fields = ('name', 'pic', 'story', 'hometown', 'twitter', 'facebook_url', 'wiki_url')
 

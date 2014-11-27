@@ -1,12 +1,46 @@
 {% extends "futurus/base.html" %}
 {% block content %}
 {% load staticfiles %}
-<h1>{{ person.name }}</h1>
-{{ person.user }}
+<div class="middle">
+<div class="panel panel-default panel-primary org-panel">
+<div class="panel-heading">
+    <h1>{{ person.name }}</h1>
+    {% if user.is_authenticated and user == person.user %}<a style="color: white;" href="{% url 'edit_person' person.slug %}">Edit Profile</a>{% endif %}
+</div>
+<div class="panel-body">
+</br>
+
+{% if person.pic %}<img src="{{ person.pic.url }}" class="img-responsive" alt="Responsive image" style ="max-height: 100px;">{% endif %}
+
 
 </br>
-{% if person.pic %}<img src="{{ person.pic.url }}" class="img-responsive" alt="Responsive image" style ="max-height: 100px;">{% endif %}
-<a>Update Picture</a>
+{% if person.twitter %}
+<a href="{{person.twitter}}" class="social-wrapper">
+<div href="" class="social-img-wrapper"><img src="{% static 'img/Twitter_logo_blue.png' %}" class="img-responsive social-img"></div>
+<div class="social-text">@{{person.twitter}}</div>
+</a><!-- end of social-wrapper -->
+{% endif %}
+
+{% if person.facebook_url %}
+<a href="{{person.facebook_url}}" class="social-wrapper">
+<div href="" class="social-img-wrapper"><img src="{% static 'img/facebook.png' %}" class="img-responsive social-img"></div>
+<div class="social-text">{% if person.facebook_title %}{{person.facebook_title}}{% endif %}</div>
+</a><!-- end of social-wrapper -->
+{% endif %}
+
+{% if person.linkedin %}
+<a href="{{person.linkedin}}" class="social-wrapper">
+<div href="" class="social-img-wrapper"><img src="{% static 'img/linkedin.png' %}" class="img-responsive social-img"></div>
+<div class="social-text">{{person.linkedin}}</div>
+</a><!-- end of social-wrapper -->
+{% endif %}
+
+{% if person.hometown %}
+</br>
+<h4>From {{person.hometown}}</h4>
+{% endif %}
+
+
 
 </br>
 {% if person.membership_set %}
@@ -14,4 +48,14 @@
 <div class="well" style="-webkit-columns: 300px; -moz-columns: 300px; columns: 300px;">{{person.story}}</div>
 {% endif %}
 
+{% if person.wiki_title %}
+</br>
+<h4>Wikipedia Article</h4>
+<iframe src="http://en.wikipedia.org/w/index.php?title={{person.wiki_title}}&printable=yes" style="width: 100%;"></iframe>
+{% endif %}
+
+
+</div><!-- end .panel-body -->
+</div><!-- end .panel -->
+</div><!-- end .middle -->
 {% endblock %}

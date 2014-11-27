@@ -1,11 +1,24 @@
 {% extends "futurus/base.html" %}
+{% load staticfiles %}
 {% block content %}
-<form id="login_form" method="post" action="/futurus/login/">
+<script src="{% static 'js/disable-submit.js' %}"></script>
+<div class="middle">
+{% for error in form.non_field_errors %}
+{{error}}
+{% endfor %}
+<h1>Login Here!</h1>
+<form id="login_form" method="post" action="/futurus/login/" role="form">
 {% csrf_token %}
-Username: <input type="text" name="username" value="" size="50" />
-<br />
-Password: <input type="password" name="password" value="" size="50" />
-<br />
-<input type="submit" value="submit" />
+<div id="form-group-email" class="form-group">
+    <label for="id_email">Email</label>
+    <input id="id_email" type="email" name="email" maxlength="100" class="form-control" placeholder="Enter your email address here">
+</div>
+<div id="form-group-password" class="form-group">
+    <label for="id_password">Password</label>
+    <input id="id_password" type="password" name="password" class="form-control" placeholder="Enter your new password here">
+</div>
+<!-- Provide a button to click to submit the form. -->
+<input id="submit" type="submit" value="submit" />
 </form>
+</div> <!-- end .middle -->
 {% endblock %}

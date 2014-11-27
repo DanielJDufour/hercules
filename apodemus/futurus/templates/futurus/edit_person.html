@@ -1,0 +1,44 @@
+{% extends "futurus/base.html" %}
+{% load staticfiles %}
+{% block content %}
+<div class="middle">
+<h1>Edit the Profile Here!</h1><br/>
+<a href="{% url 'person' person.slug %}">Return to Profile Page</a>
+<form id="person_form" method="post" enctype="multipart/form-data" role="form">
+{% csrf_token %}
+<div id="form-group-name" class="form-group">
+    <label for="id_name">Name</label>
+    <input id="id_name" type="text" name="name" maxlength="100" class="form-control" placeholder="Enter your name here" required="required" value="{{person.name}}">
+</div>
+<div id="form-group-pic" class="form-group">
+    <label for="id_pic">Pic</label>
+    <input id="id_pic" type="file" name="pic">
+</div>
+<div id="form-group-story" class="form-group">
+    <label for="id_story">Story/Background</label>
+    <textarea id="id_story" name="story" class="form-control">{% if person.story%}{{person.story}}{%endif%}</textarea>
+</div>
+<div id="form-group-hometown" class="form-group">
+    <label for="id_hometown">Hometown</label>
+    <input id="id_hometown" type="text" name="hometown" maxlength="100" class="form-control" placeholder="Enter your hometown here" value="{% if person.hometown %}{{person.hometown}}{% endif %}">
+</div>
+<div id="form-group-twitter" class="form-group">
+  <label for="id_twitter">Twitter</label>
+  <div class="input-group">
+    <div class="input-group-addon">@</div>
+    <input type="text" class="form-control" name="twitter" id="id_twitter" placeholder="Enter twitter handle" value="{% if person.twitter %}{{person.twitter}}{% endif %}">
+  </div>
+</div>
+<div id="form-group-facebook" class="form-group">
+    <label for="id_facebook_url">Facebook</label>
+    <input type="url" class="form-control" id="id_facebook_url" name="facebook_url" placeholder="Enter the url to the Facebook page" value="{% if person.facebook_url %}{{person.facebook_url}}{% endif %}">
+</div>
+<div id="form-group-wiki" class="form-group">
+    <label for="id_wiki_url">Wiki</label>
+    <input type="url" class="form-control" id="id_wiki_url" name="wiki_url" placeholder="Enter the url to the Wiki page" value="{% if person.wiki_url %}{{person.wiki_url}}{% endif %}">
+</div>
+<!-- Provide a button to click to submit the form. -->
+<input type="submit" name="submit" value="Submit" />
+</form>
+</div> <!-- end .middle -->
+{% endblock %}

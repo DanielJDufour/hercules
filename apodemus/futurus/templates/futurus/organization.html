@@ -1,10 +1,37 @@
 {% extends "futurus/base.html" %}
 {% block content %}
 {% load staticfiles %}
-<h1>{{ organization.name }}</h1>
+<div class="middle">
+<div class="panel panel-default panel-primary org-panel">
 
+<div class="panel-heading">
+{% if organization.logo %}<img src="{{ organization.logo.url }}" class="img-responsive org-logo" alt="Responsive image" style ="max-height: 100px;">{% endif %}
+<h1 class="org-title"> {{ organization.name }}</h1>
+</div>
+
+<div class="panel-body">
 </br>
-{% if organization.logo %}<img src="{{ organization.logo.url }}" class="img-responsive" alt="Responsive image" style ="max-height: 100px;">{% endif %}
+{% if organization.twitter %}
+<a href="{{organization.twitter}}" class="social-wrapper">
+<div href="" class="social-img-wrapper"><img src="{% static 'img/Twitter_logo_blue.png' %}" class="img-responsive social-img"></div>
+<div class="social-text">@{{organization.twitter}}</div>
+</a><!-- end of social-wrapper -->
+{% endif %}
+
+{% if organization.facebook_url %}
+<a href="{{organization.facebook_url}}" class="social-wrapper">
+<div href="" class="social-img-wrapper"><img src="{% static 'img/facebook.png' %}" class="img-responsive social-img"></div>
+<div class="social-text">{% if organization.facebook_title %}{{organization.facebook_title}}{% endif %}</div>
+</a><!-- end of social-wrapper -->
+{% endif %}
+
+{% if organization.linkedin %}
+<a href="{{organization.linkedin}}" class="social-wrapper">
+<div href="" class="social-img-wrapper"><img src="{% static 'img/linkedin.png' %}" class="img-responsive social-img"></div>
+<div class="social-text">{{organization.linkedin}}</div>
+</a><!-- end of social-wrapper -->
+{% endif %}
+
 
 </br>
 {% if organization.projects.all %}
@@ -33,4 +60,16 @@
 <h4>Organization Founded: {{ organization.organization_created }}</h4>
 {% endif %}
 
+{% if organization.links %}
+</br>
+<h4>Related Websites</h4>
+<ul>
+{% for link in organization.links.all %}
+<li><a href="{{ link.url }}">{{link.title}}</a></li>
+{% endfor %}
+</ul>
+{% endif %}
+</div><!-- end .panel-body -->
+</div><!-- end .panel -->
+</div><!-- end .middle -->
 {% endblock %}

@@ -20,7 +20,7 @@
     <tbody>
         {% for person in people %}
         <tr>
-            <td>{{ person.name }}</td>
+            <td>{% if person.name %}<a class="btn btn-primary btn-xs btn-margin-xs" {% if person.slug %}href="{% url 'person' person.slug %}"{% endif %} role="button">{{ person.name }}</a>{% endif %}</td>
             <td>{% if person.pic %}<img src="{{ person.pic.url }}" class = "img-responsive" style="max-height: 50px;">{% endif %}</td>
             <td>{% for organization in person.organization_set.all %}<a class="btn btn-primary btn-xs btn-margin-xs" href={% url 'organization' organization.slug %} role="button">{{ organization.name }}</a>{% endfor %}</td>
             <td>$0.00</td>
