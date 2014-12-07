@@ -15,6 +15,25 @@ class Donor(models.Model):
     user = models.ForeignKey(User, unique=True, null=True)
     donated = models.DecimalField(max_digits=100, default=0.00,decimal_places=2)
 
+class Facebook(models.Model):
+    title = models.CharField(max_length=200, null=True, blank=True)
+    url = models.URLField(null=True, blank=True)
+    def update(self):
+        if self.url == "":
+            self.title = ""
+        else:
+            self.title = BeautifulSoup(requests.get(self.url).content).title.string.split(" -")[0].strip().split(" |")[0].strip() 
+            self.save()
+    def __str__(self):
+        if self.title:
+            return self.title
+        elif self.url:
+            return self.url
+        else:
+            return "[unknown Facebook objects]"
+    class Meta:
+        ordering = ['title']  
+
 class Link(models.Model):
     title = models.CharField(max_length=200, null=True, blank=True)
     url = models.URLField(null=True, blank=True)
@@ -22,6 +41,19 @@ class Link(models.Model):
         return self.title
     class Meta:
         ordering = ['title']
+
+class LinkedIn(models.Model):
+    title = models.CharField(max_length=200, null=True, blank=True)
+    url = models.URLField(null=True, blank=True)
+    def __str__(self):
+        if self.title:
+            return self.title
+        elif self.url:
+            return self.url
+        else:
+            return "unnamed linkedin obj"
+    class Meta:
+        ordering = ['title']  
 
 class Location(models.Model):
     name = models.CharField(max_length=200)
@@ -42,26 +74,36 @@ class Membership(models.Model):
 
 
 class Organization(models.Model):
-    bricked = models.BooleanField(default=False)
-    hidden = models.BooleanField(default=True)
-    name = models.CharField(max_length=200)
+    bricked = models.NullBooleanField(default=False, null=True, blank=True)
+    owners = models.ManyToManyField(User, blank=True, null=True)
+    hidden = models.NullBooleanField(default=True, null=True, blank=True)
+    name = models.CharField(max_length=200, null=True, blank=True)
     abbreviation = models.CharField(max_length=200, blank=True, null=True)
-    slug = models.SlugField(unique=True)
+    slug = models.SlugField(unique=True, null=True, blank=True)
     logo = models.ImageField(upload_to="images/logos", blank=True, null=True)
     entry_created = models.DateTimeField(auto_now_add=True)
     organization_created = models.DateField(null=True, blank=True)
+    #islamic year.... maybe add a method to the DateField that returns year month day of Islamic Calendar
     members = models.ManyToManyField('Person', through='Membership')
     links = models.ManyToManyField('Link', blank=True)
     projects = models.ManyToManyField('Project', blank=True)
     partners = models.ManyToManyField('Organization', blank=True)
-    facebook = models.CharField(max_length=200, null=True, blank=True)
-    twitter = models.CharField(max_length=200, null=True, blank=True)
-    linkedin = models.CharField(max_length=200, null=True, blank=True) 
-    wiki = models.CharField(max_length=200, null=True, blank=True)
+    facebook = models.OneToOneField('Facebook', blank=True, null=True)
+    twitter = models.OneToOneField('Twitter', null=True, blank=True)
+    linkedin = models.OneToOneField('LinkedIn', null=True, blank=True) 
+    wiki = models.OneToOneField('Wiki', blank=True, null=True)
+    mission = models.TextField(null=True, blank=True)
 
+    tasks = models.ManyToManyField('Task', blank=True)
 
+    def update(self):
+        self.facebook.update()
+        self.wiki.update()
     def __str__(self):
-        return self.name
+        if self.name:
+            return self.name
+        else:
+            return "Un-named Org"
     class Meta:
         ordering = ['name']
 
@@ -73,31 +115,18 @@ class Person(models.Model):
     pic = models.ImageField(upload_to="images/biopics", blank=True, null=True)
     story = models.TextField(null=True, blank=True)
     hometown = models.CharField(max_length=200, null=True, blank=True)
-    facebook_url = models.URLField(max_length=200, null=True, blank=True)
-    facebook_title = models.CharField(max_length=200, null=True, blank=True)
-    twitter = models.CharField(max_length=200, null=True, blank=True)
-    wiki_title = models.CharField(max_length=200, null=True, blank=True)
-    wiki_url = models.URLField(max_length=200, null=True, blank=True)
-    def update(self):
-        self.updateFacebook()
-        self.updateWiki()
-    def updateFacebook(self):
-        print "starting updateWiki"
-        print "facebook_url is", self.facebook_url
-        if self.facebook_url == "":
-            self.facebook_title = ""
-        else:
-            self.facebook_title = BeautifulSoup(requests.get(self.facebook_url).content).title.string.split(" -")[0].strip() 
-            self.save()
-    def updateWiki(self):
-        print "starting updateWiki"
+    facebook = models.OneToOneField('Facebook', blank=True, null=True)
+    linkedin = models.OneToOneField('LinkedIn', null=True, blank=True)
+    twitter = models.OneToOneField('Twitter', null=True, blank=True)
+    wiki = models.OneToOneField('Wiki', blank=True, null=True)
 
-        print "wiki_url is", self.wiki_url
-        if self.wiki_url == "":
-            self.wiki_title = ""
-        else:
-            self.wiki_title = re.search('(?<=wiki\/)\w+', self.wiki_url).group(0)
-            self.save()
+    tasks = models.ManyToManyField('Task', blank=True)
+
+    def update(self):
+        if self.facebook:
+            self.facebook.update()
+        if self.wiki:        
+            self.wiki.update()
     def __str__(self):
         return self.name
     class Meta:
@@ -123,15 +152,17 @@ class Step(models.Model):
     description = models.TextField(null=True, blank=True)
     def __str__(self):
         return self.name
-    
-class Video(models.Model):
-    title = models.CharField(max_length=200, null=True, blank=True)
-    url = models.URLField(null=True, blank=True)
-    embed = models.TextField(default="",null=True,blank=True)
+
+class Task(models.Model):
+    user = models.OneToOneField(User, blank=True, null=True)
+    short_name = models.CharField(max_length=200, null=True, blank=True, default="person:facebook")
+    name = models.CharField(max_length=200, null=True, blank=True)
+    description = models.CharField(max_length=200, null=True, blank=True)
+    completed = models.NullBooleanField(null=True, blank=True)
+    completed_at = models.DateTimeField(null=True, blank=True)
+    url = models.CharField(max_length=200, null=True, blank=True)
     def __str__(self):
-        return self.title
-    class Meta:
-        ordering = ['title']
+        return self.name
 
 class TeamMember(models.Model):
     name = models.CharField(max_length=200, null=True, blank=True)
@@ -142,6 +173,42 @@ class TeamMember(models.Model):
         return self.name
     class Meta:
         ordering = ['name']
+
+class Twitter(models.Model):
+    handle = models.CharField(max_length=200, null=True, blank=True)
+    url = models.URLField(null=True, blank=True)
+    def __str__(self):
+        if self.handle:
+            return "@" + self.handle
+        elif self.url:
+            return self.url
+        else:
+            return "[unhandled twitter object]"
+    class Meta:
+        ordering = ['handle']  
+
+class Video(models.Model):
+    title = models.CharField(max_length=200, null=True, blank=True)
+    url = models.URLField(null=True, blank=True)
+    embed = models.TextField(default="",null=True,blank=True)
+    def __str__(self):
+        return self.title
+    class Meta:
+        ordering = ['title']
+
+class Wiki(models.Model):
+    title = models.CharField(max_length=200, null=True, blank=True)
+    url = models.URLField(null=True, blank=True)
+    def update(self):
+        if self.url == "":
+            self.title = ""
+        else:
+            self.title = re.search('(?<=wiki\/)\w+', self.url).group(0)
+            self.save()
+    def __str__(self):
+        return self.title
+    class Meta:
+        ordering = ['title']
 
 def updatePartners(sender, instance, **kwargs):
     print "updating partners"    

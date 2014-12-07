@@ -1,6 +1,7 @@
 {% extends "futurus/base.html" %}
 {% load staticfiles %}
 {% block content %}
+{{facebook_form}}
 <div class="middle">
 <h1>Edit the Profile Here!</h1><br/>
 <a href="{% url 'person' person.slug %}">Return to Profile Page</a>
@@ -26,19 +27,28 @@
   <label for="id_twitter">Twitter</label>
   <div class="input-group">
     <div class="input-group-addon">@</div>
-    <input type="text" class="form-control" name="twitter" id="id_twitter" placeholder="Enter twitter handle" value="{% if person.twitter %}{{person.twitter}}{% endif %}">
+    <input type="text" class="form-control" name="twitter" id="twitter" placeholder="Enter twitter handle" value="{% if person.twitter.handle %}{{person.twitter.handle}}{% endif %}">
   </div>
 </div>
 <div id="form-group-facebook" class="form-group">
-    <label for="id_facebook_url">Facebook</label>
-    <input type="url" class="form-control" id="id_facebook_url" name="facebook_url" placeholder="Enter the url to the Facebook page" value="{% if person.facebook_url %}{{person.facebook_url}}{% endif %}">
+    <label for="id_facebook">Facebook</label>
+    <input type="url" class="form-control" id="id_facebook" name="facebook" placeholder="Enter the url to the Facebook page" value="{% if person.facebook.url %}{{person.facebook.url}}{% endif %}">
 </div>
 <div id="form-group-wiki" class="form-group">
-    <label for="id_wiki_url">Wiki</label>
-    <input type="url" class="form-control" id="id_wiki_url" name="wiki_url" placeholder="Enter the url to the Wiki page" value="{% if person.wiki_url %}{{person.wiki_url}}{% endif %}">
+    <label for="id_wiki">Wiki</label>
+    <input type="url" class="form-control" id="id_wiki" name="wiki" placeholder="Enter the url to the Wiki page" value="{% if person.wiki.url %}{{person.wiki.url}}{% endif %}">
 </div>
 <!-- Provide a button to click to submit the form. -->
 <input type="submit" name="submit" value="Submit" />
 </form>
 </div> <!-- end .middle -->
+<script>
+$(document).ready(function(){
+    if(window.location.href.indexOf("jumpto=twitter") > -1){
+        var focel = $("#id_twitter");
+        window.scrollTo(0,focel.offset().top);
+        focel.focus();
+    }
+});
+</script>
 {% endblock %}
