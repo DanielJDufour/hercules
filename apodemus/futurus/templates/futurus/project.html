@@ -1,8 +1,19 @@
 {% extends "futurus/base.html" %}
 {% block content %}
 {% load staticfiles %}
+<div class="middle">
 <h1>{{ project.title }}</h1>
 </br>
+
+<h4>Percent Funded</h4>
+<div class="progress">
+    <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="{{project.percent_funded}}" aria-valuemin="0" aria-valuemax="100" style="width: {{project.percent_funded}}%;">
+        {{project.percent_funded}} %
+    </div><!-- end progress-bar -->
+</div><!-- end progress -->
+{% if project.percent_funded == 0 %}<i>No Funding Yet</i>{% endif %}
+</br></br></br>
+
 
 {% if project.organization_set.all %}
 <h4>Participating Organizations</h4>
@@ -19,11 +30,13 @@
 {% endfor %}
 </div>
 {% endif %}
+</br></br>
 
 {% if project.description %}
 <h4>Project Description</h4>
 <div class="well">{{project.description}}</div>
 {% endif %}
+</br></br>
 
 {% if organization.partners.all %}
 <h4>Project Partners</h4>
@@ -40,6 +53,7 @@
 {% endfor %}
 </div>
 {% endif %}
+</br></br>
 
 {% if project.steps.all %}
 <h4>Project Steps</h4>
@@ -48,16 +62,37 @@
   <div class="panel panel-default">
     <div class="panel-heading">
       <h4 class="panel-title">
-        <a data-toggle="collapse" data-parent="#accordion" href="#collapse{{ forloop.counter }}">{{ forloop.counter }}| {{ step.title }}</a>
+        <a data-toggle="collapse" data-parent="#accordion" href="#collapse{{ forloop.counter }}">{{ forloop.counter }}| {{ step.name }}{% if step.completed %}<span class="pull-right" style="font-size: 10pt; text-decoration: italic;">Complete &#10004;</span>{% endif %}</a>
       </h4>
     </div>
     <div id="collapse{{ forloop.counter }}" class="panel-collapse collapse">
-      <div class="panel-body">{{ step.description }}</div>
+        <div class="panel-body">
+             Funding
+             <div class="progress">
+                <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="{{step.percent_funded}}" aria-valuemin="0" aria-valuemax="100" style="width: {{step.percent_funded}}%;">
+        {{step.percent_funded}} %
+                </div><!-- end progress-bar -->
+            </div><!-- end progress -->
+            {{ step.description }}
+            </br>
+            <a href="#" class="btn btn-success" {% if step.percent_funded >= 100 %}disabled{% endif %}>Fund This Step</a>
+        </div><!-- end panel-body -->
     </div>
   </div>
 {% endfor %}
 </div>
 {% endif %}
+</br></br>
 
-
+<h4>Donors</h4>
+<div class="well">
+{% for donor in donors %}
+{% if donor.user.person %}
+    <a href="{% if donor.user.person.slug %}{% url 'person' donor.user.person.slug %}{% endif %}" class="avatar-link">
+        <img src="{{donor.user.person.pic.url}}" class="avatar">
+    </a>
+{% endif %}
+{% endfor %}
+</div><!-- end .well -->
+</div> <!-- end .middle -->
 {% endblock %}

@@ -2,7 +2,7 @@
 {% load staticfiles %}
 {% block content %}
 <div class="middle">
-<h1>Create your Organization Here!</h1><br/>
+<h1>Edit your Organization Here!</h1><br/>
 {{ form.non_field_errors }}
 {% if form.errors %}
 <div class="alert alert-danger">
@@ -28,7 +28,7 @@
 {% csrf_token %}
 <div id="form-group-name" class="form-group">
     <label for="id_name">Organization Name</label>
-    <input id="id_name" type="text" name="name" maxlength="100" class="form-control" placeholder="Enter your organization's name here" required="required" value="{{form.name.value}}">
+    <input id="id_name" type="text" name="name" maxlength="100" class="form-control" placeholder="Enter your organization's name here" required="required" value="{% if form %}{{form.name.value}}{% else %}{{organization.name}}{% endif %}">
 </div>
 
 
@@ -38,7 +38,7 @@
 <div id="form-group-website" class="form-group">
     <label for="id_website">Organization's Website</label>
     <p class="help-block">If you don't have your own website yet, leave this blank.</p>
-    <input type="url" class="form-control" id="id_website" name="website" placeholder="Enter the url to your organization's Website" value="{{form.website.value}}">
+    <input type="url" class="form-control" id="id_website" name="website" placeholder="Enter the url to your organization's Website" value="{% if form %}{{form.website.value}}{% else %}{{ organization.website }}{% endif %}">
 </div>
 
 
@@ -46,7 +46,7 @@
 </br></br>
 <div id="form-group-abbreviation" class="form-group">
     <label for="id_abbreviation">Organization Abbreviation</label>
-    <input id="id_abbreviation" type="text" name="abbreviation" maxlength="100" class="form-control" placeholder="Enter your organization's abbreviation here" value="{{form.value.abbreviation}}">
+    <input id="id_abbreviation" type="text" name="abbreviation" maxlength="100" class="form-control" placeholder="Enter your organization's abbreviation here" value="{% if form %}{{form.value.abbreviation }}{% else %}{{ organization.abbreviation }}{% endif %}">
 </div>
 
 
@@ -89,7 +89,7 @@
 <div id="form-group-mission" class="form-group">
     <label for="id_mission">Mission</label>
     <p class="help-block">Write your mission statement below.  Your mission statement says what is the goal of the organization.  It is important to provide one because it is common practice and donors expect one.  Organizations that have mission statements receive <b>X</b> more in donations.</p>
-    <textarea type="url" class="form-control" id="id_mission" name="mission" placeholder="Enter your organization's mission statement">{{form.mission.value}}</textarea>
+    <textarea type="url" class="form-control" id="id_mission" name="mission" placeholder="Enter your organization's mission statement">{% if form %}{{form.mission.value}}{% else %}{{ organization.mission }}{% endif %}</textarea>
 </div>
 
 
@@ -104,7 +104,7 @@
 <div id="form-group-organization_created" class="form-group">
     <label for="id_organization_created">Founding Date</label>
     <p class="help-block">Enter the year that your organization was founded.  Donors expect this and it make your organization appear more authentic.</p>
-    <input id="id_organization_created" type="text" name="organization_created" class="form-control" value="{{form.organization_created.value}}">
+    <input id="id_organization_created" type="text" name="organization_created" class="form-control" value="{% if form %}{{form.organization_created.value}}{% elif organization.organization_created  %}{{ organization.organization_created }}{% endif %}">
 </div>
 
 
@@ -112,14 +112,14 @@
 
 <div id="form-group-facebook" class="form-group">
     <label for="id_facebook">Facebook</label>
-    <input type="url" class="form-control" id="id_facebook" name="facebook" placeholder="Enter the url to your organization's Facebook" value="{{form.facebook.value}}">
+    <input type="url" class="form-control" id="id_facebook" name="facebook" placeholder="Enter the url to your organization's Facebook" value="{% if form %}{{form.facebook.value}}{% else %}{{ organization.facebook.url }}{% endif %}">
 </div>
 
 <div id="form-group-twitter" class="form-group">
   <label for="id_twitter">Twitter</label>
   <div class="input-group">
     <div class="input-group-addon">@</div>
-    <input type="text" class="form-control" name="twitter" id="twitter" placeholder="Enter twitter handle of the organization" value="{{form.twitter.value}}">
+    <input type="text" class="form-control" name="twitter" id="twitter" placeholder="Enter twitter handle of the organization" value="{% if form %}{{form.twitter.value}}{% else %}{{organization.twitter.handle}}{% endif %}">
   </div>
 </div>
 
@@ -127,7 +127,7 @@
 <div id="form-group-linkedin" class="form-group">
     <label for="id_linkedin">LinkedIn</label>
     <p class="help-block">LinkedIn is basically the Facebook for the professional world.  It is used by many people in the Western World.  You should create an organization here.  It will give you legitimacy.  Organizations that have LinkedIn pages receive X times more money. Make sure I do the math to control for things, so I'm not just doing correlation bullshit</p>
-    <input type="url" class="form-control" id="id_linkedin" name="linkedin" placeholder="Enter the url to your organization's LinkedIn" value="{{form.linkedin.value}}">
+    <input type="url" class="form-control" id="id_linkedin" name="linkedin" placeholder="Enter the url to your organization's LinkedIn" value="{% if form %}{{form.linkedin.value}}{% else %}{{ organization.linkedin.url }}{% endif %}">
 </div>
 
 
@@ -137,7 +137,7 @@
 <div id="form-group-wiki" class="form-group">
     <label for="id_wiki">Wiki</label>
     <p class="help-block">If you have a Wikipedia page, definitely link to it.  If you don't know what Wikipedia is, don't worry about this now</p>
-    <input type="url" class="form-control" id="id_wiki" name="wiki" placeholder="Enter the url to the Wiki page" value="{{form.wiki.value}}">
+    <input type="url" class="form-control" id="id_wiki" name="wiki" placeholder="Enter the url to the Wiki page" value="{% if form %}{{form.wiki.value}}{% else %}{{ organization.wiki.url }}{% endif %}">
 </div>
 
 
@@ -191,7 +191,7 @@
 
 <!-- Provide a button to click to submit the form. -->
 </br></br>
-<input type="submit" name="submit" value="Submit" class="btn btn-success"/>
+<input type="submit" name="submit" value="Submit Changes" class="btn btn-success"/>
 </form>
 </div> <!-- end .middle -->
 {% endblock %}

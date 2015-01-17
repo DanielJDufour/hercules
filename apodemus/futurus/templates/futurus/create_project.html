@@ -1,0 +1,96 @@
+{% extends "futurus/base.html" %}
+{% load staticfiles %}
+{% block content %}
+<div class="middle">
+<h1>Create your Organization Here!</h1><br/>
+<form id="person_form" method="post" enctype="multipart/form-data" role="form">
+{% csrf_token %}
+<div id="form-group-name" class="form-group">
+    <label for="id_name">Organization Name</label>
+    <input id="id_name" type="text" name="name" maxlength="100" class="form-control" placeholder="Enter your organization's name here" required="required">
+</div>
+
+<!-- Abbreviation: could use js to autofill -->
+</br></br>
+<div id="form-group-abbreviation" class="form-group">
+    <label for="id_abbreviation">Organization Abbreviation</label>
+    <input id="id_abbreviation" type="text" name="name" maxlength="100" class="form-control" placeholder="Enter your organization's abbreviation here" required="required">
+</div>
+
+
+<!-- owners, say "website administrators" -->
+<!-- maybe instead of select just have a bunch of checkboxes and scrollable div container.. but that's probably not sustainable-->
+</br></br>
+<div id="form-group-owners" class="form-group">
+    <label for="id_owners">Website Administrators</label>
+    <p class="help-block">The website administrators are the ones that will have the ability to change your organization's information on this website.</p>
+    <div id="owners-scrollbox" class="form-control">
+    {% for person in people %}
+    {% if person.name and person.user.email %} 
+    <div class="owner-row"><input type="checkbox" name="owners"><span style="vertical-align: middle; padding-bottom: 7px;">{{person.name}}</span></div>
+    {% endif %}
+    {% endfor %}
+    </div>
+</div>
+
+
+</br></br>
+<div id="form-group-mission" class="form-group">
+    <label for="id_mission">Mission</label>
+    <p class="help-block">Write your mission statement below.  Your mission statement says what is the goal of the organization.  It is important to provide one because it is common practice and donors expect one.  Organizations that have mission statements receive <b>X</b> more in donations.</p>
+    <textarea type="url" class="form-control" id="id_mission" name="mission" placeholder="Enter your organization's mission statement"></textarea>
+</div>
+
+
+</br></br>
+<div id="form-group-logo" class="form-group">
+    <label for="id_logo_">Logo</label>
+    <input id="id_logo" type="file" name="logo">
+</div>
+
+</br></br>
+<div id="form-group-organization_created" class="form-group">
+    <label for="id_organization_created">Founding Date</label>
+    <p class="help-block">Enter the year that your organization was founded.  Donors expect this and it make your organization appear more authentic.</p>
+    <input id="id_organization_created" type="text" name="organization_created" class="form-control">
+</div>
+
+
+<!-- members, select your members -->
+
+<div id="form-group-facebook" class="form-group">
+    <label for="id_facebook">Facebook</label>
+    <input type="url" class="form-control" id="id_facebook" name="facebook" placeholder="Enter the url to your organization's Facebook">
+</div>
+
+<div id="form-group-twitter" class="form-group">
+  <label for="id_twitter">Twitter</label>
+  <div class="input-group">
+    <div class="input-group-addon">@</div>
+    <input type="text" class="form-control" name="twitter" id="twitter" placeholder="Enter twitter handle of the organization">
+  </div>
+</div>
+
+</br></br>
+<div id="form-group-linkedin" class="form-group">
+    <label for="id_linkedin">LinkedIn</label>
+    <p class="help-block">LinkedIn is basically the Facebook for the professional world.  It is used by many people in the Western World.  You should create an organization here.  It will give you legitimacy.  Organizations that have LinkedIn pages receive X times more money. Make sure I do the math to control for things, so I'm not just doing correlation bullshit</p>
+    <input type="url" class="form-control" id="id_linkedin" name="linkedin" placeholder="Enter the url to your organization's LinkedIn">
+</div>
+
+
+<!-- I also def need to add in a field for accomplishments and explain what that means in the West.  Basically, explain how donors look for tangible measurable accomplishments with numbers versus stuff just saying 'first organization that bla bla bla' or most popular org or org that stands up for a group -->
+
+</br></br>
+<div id="form-group-wiki" class="form-group">
+    <label for="id_wiki">Wiki</label>
+    <p class="help-block">If you have a Wikipedia page, definitely link to it.  If you don't know what Wikipedia is, don't worry about this now</p>
+    <input type="url" class="form-control" id="id_wiki" name="wiki" placeholder="Enter the url to the Wiki page">
+</div>
+
+<!-- Provide a button to click to submit the form. -->
+</br></br>
+<input type="submit" name="submit" value="Submit" />
+</form>
+</div> <!-- end .middle -->
+{% endblock %}

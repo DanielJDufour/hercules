@@ -4,14 +4,14 @@
 
 <h1>Incomplete Tasks</h1>
 {% for task in tasks_incomplete %}
-<a href="" class="btn btn-info" style="text-align: left; max-width: 200px; white-space: normal;"><b>{{task.name}}</b></br>{{task.description}}</a>
+<a href="{{task.url}}" class="btn btn-info" style="text-align: left; max-width: 200px; white-space: normal; height: 75px; margin-top: 5px;"><b>{{task.name}}</b></br>{{task.description}}</a>
 {% endfor %}
 
 </br></br>
 
 <h1>Complete Tasks</h1>
 {% for task in tasks_completed %}
-<a href="" class="btn btn-default" style="text-align: left; max-width: 200px; white-space: normal;"><b>{{task.name}}</b></br>{{task.description}}</a>
+<a href="{{task.url}}" class="btn btn-default" style="text-align: left; max-width: 200px; white-space: normal; height: 75px; margin-top: 5px;"><s><b>{{task.name}}</b></br>{{task.description}}</s></a>
 {% endfor %}
 
 </div><!-- end .middle -->

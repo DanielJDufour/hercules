@@ -2,17 +2,25 @@
 {% block content %}
 <div class="middle">
 <div class="jumbotron">
-  <h1>Hello{% if user.is_authenticated%}, {% if user.person_set.name %}{{user.person_set.name}}{% else %}User{% endif %}{% endif %}!</h1>
+  <h1>Hello{% if user.is_authenticated%}, {% if user.person.name %}{{user.person.name}}{% else %}User{% endif %}{% endif %}!</h1>
   <p>Welcome to the prototype of the Crowdfunding and Governance Platform.  We hope you provide you feedback.  Only through your help can we succeed.  Thank you! There are <b>{{numberOfUsers}}</b> people using this website today and more join every day.</p>
 
 </div><!-- end jumbotron"-->
 
-{% if not user.is_authenticated %}
+{% if user.is_authenticated %}
+<h3>Keep up the good work!</h3>
+<h5>You have completed <b>{{numberOfCompleteTasks}}</b> task{% if numberOfCompleteTasks == 0 or numberOfCompleteTasks > 1 %}s{% endif %}.</h5>
+<h5>You currently have <b>{{numberOfIncompleteTasks}}</b> pending task{% if numberOfIncompleteTasks == 0 or numberOfIncompleteTasks > 1 %}s{% endif %}.</h5>
+<a href={% url 'tasks' %}><button class="btn btn-success btn-md">View Tasks</button></a>
+
+{% else %}
 <a href="{% url 'social:begin' 'facebook' %}" class="btn btn-sm btn-primary btn-fb" id="index-button-facebook">Sign in with Facebook</a>
 <a href="{% url 'social:begin' 'google-oauth2' %}" class="btn btn-sm btn-primary btn-go" id="index-button-google">Sign in with Google</a>
 <a href="{% url 'social:begin' 'twitter' %}" class="btn btn-sm btn-primary btn-go" id="index-button-google">Sign in with Twitter</a>
 <a href={% url 'register' %}><button class="btn btn-primary btn-sm">Sign up with e-mail</button></a>
 {% endif %}
+
+
 
 </div><!-- end .middle -->
 {% endblock %}

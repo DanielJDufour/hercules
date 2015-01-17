@@ -5,18 +5,40 @@
 {% if registered %}
 <h1>Congratulations.  You have successfully registered.</h1>
 <p>
-To create your profile, click <a href="">here</a>.
+To create your profile, click <a href={% url 'create_person' %}>here</a>.
 </p>
 <p>
 To return to the main page, click <a href="{% url 'index' %}">here</a>.
 </p>
 {% else %}
+
+{{ form.non_field_errors }}
+{% if form.errors %}
+<div class="alert alert-danger">
+    <h3>Errors</h3>
+    <ul>
+    {% for field in form %}
+    {% if field.errors %}
+        <li>
+            {{field.label_tag}}
+            <ul>
+            {% for error in field.errors %}
+                <li><a href="#{{field.id_for_label}}" class="alert-link">{{error}}</a></li>
+            {% endfor %}
+            </ul>
+        </li>
+    {% endif %}
+{% endfor %}
+</ul>
+</div>
+{% endif %}
+
 <h1>Register here!</h1><br/>
 <form id="user_form" method="post" action="/futurus/register/" enctype="multipart/form-data" role="form">
 {% csrf_token %}
 <div id="form-group-email" class="form-group">
     <label for="id_email">Email</label>
-    <input id="id_email" type="email" name="email" maxlength="100" class="form-control" placeholder="Enter your email address here" required="required">
+    <input id="id_email" type="email" name="email" maxlength="30" class="form-control" placeholder="Enter your email address here" required="required">
 </div>
 <div id="form-group-password" class="form-group">
     <label for="id_password">Password</label>

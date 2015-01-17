@@ -1,3 +1,4 @@
+from datetime import datetime
 from django.conf import settings
 from django.db import models
 #from django.contrib.gis.db import models as geomodels
@@ -8,12 +9,24 @@ from bs4 import BeautifulSoup
 
 class Donation(models.Model):
     donor = models.ForeignKey('Donor', null=True, blank=True)
+    step = models.ForeignKey('Step', null=True, blank=True)
     amount = models.DecimalField(max_digits=100, default=0.00,decimal_places=2)
-    recipient = models.ManyToManyField('Organization')
+
+    datetime = models.DateTimeField(auto_now_add=True)
+    def __str__(self):
+        return "donation of " + str(self.amount) + " from " + self.donor.user.email + " to " + self.step.name
+    class Meta:
+        ordering = ['datetime']
 
 class Donor(models.Model):
-    user = models.ForeignKey(User, unique=True, null=True)
+    user = models.OneToOneField(User, unique=True, null=True)
     donated = models.DecimalField(max_digits=100, default=0.00,decimal_places=2)
+    def __str__(self):
+        try:
+            return self.user.person.name + " (" + self.user.email + ")"
+        except:
+            return self.user.email
+
 
 class Facebook(models.Model):
     title = models.CharField(max_length=200, null=True, blank=True)
@@ -22,7 +35,10 @@ class Facebook(models.Model):
         if self.url == "":
             self.title = ""
         else:
-            self.title = BeautifulSoup(requests.get(self.url).content).title.string.split(" -")[0].strip().split(" |")[0].strip() 
+            try:
+                self.title = BeautifulSoup(requests.get(self.url).content).title.string.split(" -")[0].strip().split(" |")[0].strip() 
+            except Exception as e:
+                print e
             self.save()
     def __str__(self):
         if self.title:
@@ -74,27 +90,28 @@ class Membership(models.Model):
 
 
 class Organization(models.Model):
-    bricked = models.NullBooleanField(default=False, null=True, blank=True)
-    owners = models.ManyToManyField(User, blank=True, null=True)
-    hidden = models.NullBooleanField(default=True, null=True, blank=True)
-    name = models.CharField(max_length=200, null=True, blank=True)
     abbreviation = models.CharField(max_length=200, blank=True, null=True)
-    slug = models.SlugField(unique=True, null=True, blank=True)
-    logo = models.ImageField(upload_to="images/logos", blank=True, null=True)
+    bricked = models.NullBooleanField(default=False, null=True, blank=True)
     entry_created = models.DateTimeField(auto_now_add=True)
-    organization_created = models.DateField(null=True, blank=True)
-    #islamic year.... maybe add a method to the DateField that returns year month day of Islamic Calendar
-    members = models.ManyToManyField('Person', through='Membership')
-    links = models.ManyToManyField('Link', blank=True)
-    projects = models.ManyToManyField('Project', blank=True)
-    partners = models.ManyToManyField('Organization', blank=True)
     facebook = models.OneToOneField('Facebook', blank=True, null=True)
-    twitter = models.OneToOneField('Twitter', null=True, blank=True)
+    hidden = models.NullBooleanField(default=True, null=True, blank=True)
     linkedin = models.OneToOneField('LinkedIn', null=True, blank=True) 
-    wiki = models.OneToOneField('Wiki', blank=True, null=True)
+    links = models.ManyToManyField('Link', blank=True)
+    logo = models.ImageField(upload_to="images/logos", blank=True, null=True)
+    members = models.ManyToManyField('Person', through='Membership')
     mission = models.TextField(null=True, blank=True)
+    name = models.CharField(max_length=200, null=True, blank=True)
+    organization_created = models.DateField(null=True, blank=True)
+    owners = models.ManyToManyField(User, blank=True, null=True)
+    partners = models.ManyToManyField('Organization', blank=True)
+    projects = models.ManyToManyField('Project', blank=True)
+    slug = models.SlugField(unique=True, null=True, blank=True)
+    #islamic year.... maybe add a method to the DateField that returns year month day of Islamic Calendar
+    #tasks = models.ManyToManyField('Task', blank=True)
+    twitter = models.OneToOneField('Twitter', null=True, blank=True)
+    website = models.URLField(null=True, blank=True)
+    wiki = models.OneToOneField('Wiki', blank=True, null=True)
 
-    tasks = models.ManyToManyField('Task', blank=True)
 
     def update(self):
         self.facebook.update()
@@ -120,7 +137,7 @@ class Person(models.Model):
     twitter = models.OneToOneField('Twitter', null=True, blank=True)
     wiki = models.OneToOneField('Wiki', blank=True, null=True)
 
-    tasks = models.ManyToManyField('Task', blank=True)
+    #tasks = models.ManyToManyField('Task', blank=True)
 
     def update(self):
         if self.facebook:
@@ -140,9 +157,17 @@ class Project(models.Model):
     slug = models.SlugField(unique=True, blank=True, null=True)
     description = models.TextField(null=True, blank=True)
     steps = models.ManyToManyField('Step', blank=True)
+    money_requested = models.DecimalField(max_digits=100, default=0.00,decimal_places=2)
+    money_donated = models.DecimalField(max_digits=100, default=0.00,decimal_places=2)
+    percent_funded = models.DecimalField(max_digits=100, default=0.00, decimal_places=2)
 
     def __str__(self):
         return self.title
+    def calc_money(self):
+        self.money_requested = sum([step.money_requested for step in self.steps.all()])
+        self.money_donated = sum([step.money_donated for step in self.steps.all()])
+        self.percent_funded = (self.money_donated * 100)/self.money_requested if self.money_requested > 0 else 0
+        self.save()
     class Meta:
         ordering = ['title']
 
@@ -150,17 +175,26 @@ class Step(models.Model):
     name = models.CharField(max_length=200)
     completed = models.BooleanField(default=False)
     description = models.TextField(null=True, blank=True)
+    money_requested = models.DecimalField(max_digits=100, default=0.00,decimal_places=2)
+    money_donated = models.DecimalField(max_digits=100, default=0.00,decimal_places=2)
+    order = models.IntegerField(null=True, blank=True)
+    percent_funded = models.DecimalField(max_digits=100, default=0.00, decimal_places=2)
     def __str__(self):
         return self.name
+    def calc_money(self):
+        self.percent_funded = (self.money_donated * 100)/self.money_requested if self.money_requested > 0 else 0
+        self.save()
+    class Meta:
+        ordering = ['order']
 
 class Task(models.Model):
-    user = models.OneToOneField(User, blank=True, null=True)
-    short_name = models.CharField(max_length=200, null=True, blank=True, default="person:facebook")
+    user = models.ForeignKey(User, unique=False, blank=True, null=True)
+   # short_name = models.CharField(max_length=200, null=True, blank=True, default="person:facebook")
     name = models.CharField(max_length=200, null=True, blank=True)
-    description = models.CharField(max_length=200, null=True, blank=True)
+    #description = models.CharField(max_length=200, null=True, blank=True)
     completed = models.NullBooleanField(null=True, blank=True)
-    completed_at = models.DateTimeField(null=True, blank=True)
-    url = models.CharField(max_length=200, null=True, blank=True)
+    #completed_at = models.DateTimeField(null=True, blank=True)
+    url = models.URLField(max_length=200, null=True, blank=True)
     def __str__(self):
         return self.name
 

@@ -1,0 +1,31 @@
+{% extends "futurus/base.html" %}
+{% block content %}
+{% load staticfiles %}
+<script src="{% static 'js/search.js' %}"></script>
+<div class="find_people">
+<h1>Browse People</h1></br>
+</br>
+<h5>Everyone</h5>
+{% for person in people %}
+        {% if person.pic and person.name %}
+        <div id="flipcard-{{person.id}}" class="flipcard">
+            <div class="front" for="flipcard-{{person.id}}-front" style="width: 100%; height: 100%;">
+                <img src="{{ person.pic.url }}" class="img-responsive">
+            </div>
+            <div class="back" for="flipcard-{{person.id}}-back" style="width: 100%; height: 100%;">
+                {{ person.name }}
+                </br>
+                <b>Member of:</b>{% for organization in person.organization_set.all %}<a class="btn btn-primary btn-xs btn-margin-xs" href={% url 'organization' organization.slug %} role="button">{{ organization.name }}</a>{% endfor %}
+            </div>
+        </div>
+        <script>
+            var flipcard-{{person.id}} = document.getElementById("flipcard-{{person.id}}");
+            flipcard-{{person.id}}.addEventListener("click", function(){
+                var front = flipcard-{{person.id}}.getElementById("flipcard-{{person.id}}-front");
+                var back = flipcard-{{person.id}}.getElementById("flipcard-{{person.id}}-back");
+                if(front.h
+
+        {% endif %}
+        {% endfor %}
+</div><!-- end .middle -->
+{% endblock %}

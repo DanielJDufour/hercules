@@ -1,0 +1,8 @@
+{% extends "futurus/base.html" %}
+{% block content %}
+{% load staticfiles %}
+<div class="middle">
+    {% if user.person %}<h1>Account Settings for {{ user.person.name }}</h1>{% endif %}
+    {% if user.email %}<h3>Email: {{user.email}}</h3>{% endif %}
+</div>
+{% endblock %}

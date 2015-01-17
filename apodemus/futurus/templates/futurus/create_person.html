@@ -1,0 +1,54 @@
+{% extends "futurus/base.html" %}
+{% load staticfiles %}
+{% block content %}
+<div class="middle">
+<h1>Create you Public Profile Here!</h1><br/>
+{% include "futurus/errors.html" %}
+<form id="person_form" method="post" enctype="multipart/form-data" role="form">
+{% csrf_token %}
+<div id="form-group-name" class="form-group">
+    <label for="id_name">Name</label>
+    <input id="id_name" type="text" name="name" maxlength="100" class="form-control" placeholder="Enter your name here" required="required"{% if form.name %} value="{{form.name.value}}"{% endif %}>
+</div>
+
+</br></br>
+<b>Pic</b>
+<div class="btn-group btn-group-justified" role=group aria-label="...">
+<label class="btn btn-default" for="FromComputer">From Computer</label>
+<label class="btn btn-default" for="FromInternet">From Internet</label>
+</div>
+<div id="form-group-pic" class="form-group" style="height: 50px; padding: 4px;">
+    <input type="radio" id="FromComputer" name="pic_choice" value="FromComputer">
+    <div class="input-group">
+        <input id="id_pic" type="file" name="pic" style="margin: 0px auto;">
+    </div>
+    <input type="radio" id="FromInternet" name="pic_choice" value="FromComputer">
+    <div class="input-group">
+        <input id="id_pic_url" type=text" name="pic" maxlength="300" class="form-control" placeholder="Enter url to the image here" value="{% if form.pic %}{{form.pic.value}}{% endif %}">
+    </div>
+</div>
+<div id="form-group-story" class="form-group">
+    <label for="id_story">Story/Background</label>
+    <textarea id="id_story" name="story" class="form-control">{% if form %}{{form.story.value}}{% endif %}</textarea>
+</div>
+<div id="form-group-hometown" class="form-group">
+    <label for="id_hometown">Hometown</label>
+    <input id="id_hometown" type="text" name="hometown" maxlength="100" class="form-control" placeholder="Enter your hometown here" value="{% if form.hometown %}{{ form.hometown.value }}{% endif %}">
+</div>
+<div id="form-group-twitter" class="form-group">
+    <label for="id_twitter">Twitter</label>
+    <input type="text" class="form-control" name="twitter" id="twitter" placeholder="Enter twitter handle" value="{% if form.twitter %}{{ form.twitter.value }}{% endif %}">
+</div>
+<div id="form-group-facebook" class="form-group">
+    <label for="id_facebook">Facebook</label>
+    <input type="text" class="form-control" name="facebook" id="id_facebook" placeholder="Enter the url to the Facebook page" value="{% if form.facebook %}{{ form.facebook.value }}{% endif %}">
+</div>
+<div id="form-group-wiki" class="form-group">
+    <label for="id_wiki">Wiki</label>
+    <input type="text" class="form-control" name="wiki" id="id_wiki" placeholder="Enter the url to the Wiki page" value="{% if form.wiki %}{{ form.wiki.value }}{% endif %}">
+</div>
+<!-- Provide a button to click to submit the form. -->
+<input type="submit" name="submit" value="Submit" />
+</form>
+</div> <!-- end .middle -->
+{% endblock %}

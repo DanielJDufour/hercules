@@ -6,22 +6,23 @@
 
 <div class="panel-heading">
 {% if organization.logo %}<img src="{{ organization.logo.url }}" class="img-responsive org-logo" alt="Responsive image" style ="max-height: 100px;">{% endif %}
-<h1 class="org-title"> {{ organization.name }}</h1>
+<h1 class="org-title"> {{ organization.name }}{% if organization.abbreviation %} ({{organization.abbreviation}}){% endif %}</h1>
+{% if user.is_authenticated and user in organization.owners.all %}</br><a style="color: white;" href="{% url 'edit_organization' organization.slug %}">Edit Organization</a>{% endif %}
 </div>
 
 <div class="panel-body">
 </br>
 {% if organization.twitter %}
-<a href="{{organization.twitter}}" class="social-wrapper">
+<a href="{{organization.twitter.url}}" class="social-wrapper">
 <div href="" class="social-img-wrapper"><img src="{% static 'img/Twitter_logo_blue.png' %}" class="img-responsive social-img"></div>
 <div class="social-text">@{{organization.twitter}}</div>
 </a><!-- end of social-wrapper -->
 {% endif %}
 
-{% if organization.facebook_url %}
-<a href="{{organization.facebook_url}}" class="social-wrapper">
+{% if organization.facebook %}
+<a href="https://facebook.com/{{organization.facebook}}" class="social-wrapper">
 <div href="" class="social-img-wrapper"><img src="{% static 'img/facebook.png' %}" class="img-responsive social-img"></div>
-<div class="social-text">{% if organization.facebook_title %}{{organization.facebook_title}}{% endif %}</div>
+<div class="social-text">@{{organization.facebook}}</div>
 </a><!-- end of social-wrapper -->
 {% endif %}
 
@@ -60,7 +61,7 @@
 <h4>Organization Founded: {{ organization.organization_created }}</h4>
 {% endif %}
 
-{% if organization.links %}
+{% if organization.links.all %}
 </br>
 <h4>Related Websites</h4>
 <ul>
@@ -69,6 +70,14 @@
 {% endfor %}
 </ul>
 {% endif %}
+
+
+{% if organization.mission %}
+</br>
+<h4>Mission Statement</h4>
+<div class="well" style="-webkit-columns: 300px; -moz-columns: 300px; columns: 300px;">{{organization.mission}}</div>
+{% endif %}
+
 </div><!-- end .panel-body -->
 </div><!-- end .panel -->
 </div><!-- end .middle -->

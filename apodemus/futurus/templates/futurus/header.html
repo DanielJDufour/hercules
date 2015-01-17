@@ -10,20 +10,29 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
         </button>
-        <a class="navbar-brand" href="{% url 'index' %}">Brand</a>
+        <a class="navbar-brand" href="{% url 'index' %}">{{zone}} Crowdfunder</a>
     </div>
 
     <!-- Collect the nav links, forms, and other content for toggling -->
 
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
         <ul class="nav navbar-nav">
-            <li><a href="{% url 'person' user.person.slug %}">Your Profile</a></li>
-            <li><a href="{% url 'memberships' user.person.slug %}">Your Organizations</a></li>
+            {% if user.is_authenticated %}{% if user.person %}<li><a href="{% url 'person' user.person.slug %}">Your Public Profile</a></li>{% else %}<li><a href="{% url 'create_person' %}">Create Your Profile</a></li>{% endif %}{% endif %}
+            {% if user.person.slug %}<li><a href="{% url 'memberships' user.person.slug %}">Your Organizations</a></li>{% endif %}
+            {% if user.is_authenticated %}
+            <li class="dropdown">
+                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Add <span class="caret"></span></a>
+                 <ul class="dropdown-menu" role="menu">
+                     <li><a href="{% url 'create_organization'%}">Organization</a></li>
+                     <li><a href="{% url 'create_project' %}">Project</a></li>
+                 </ul>
+            </li>
+            {% endif %}
             <li class="dropdown">
                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Browse <span class="caret"></span></a>
                  <ul class="dropdown-menu" role="menu">
                      <li><a href="#">Organizations</a></li>
-                     <li><a href="#">People</a></li>
+                     <li><a href="{% url 'browse_people' %}">People</a></li>
                      <li><a href="#">Projects</a></li>
                  </ul>
              </li>
@@ -40,7 +49,9 @@
                 <ul class="dropdown-menu" role="menu">
                     <li><a href="#">About</a></li>
                     <li><a href="#">Contact</a></li>
-                    <li><a href="{% url 'tasks' %}">Tasks</a></li>
+                    {% if user.is_authenticated %}<li><a href="{% url 'tasks' %}">Tasks</a></li>{% endif %}
+                    {% if user.is_authenticated %}<li><a href="{% url 'transactions' %}">Financial History</a></li>{% endif %}
+                    {% if user.is_authenticated %}<li><a href="{% url 'account' %}">Account & Email</a></li>{% endif %}
                 </ul>
             </li>
             {% if user.is_authenticated %}
