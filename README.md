@@ -21,12 +21,16 @@ sudo apt-get update
 
 ####Install Required Packages
 ```
-sudo apt-get install -y curl vim git postgresql libpq-dev postgresql-server-dev-all python python-dev python-pip
+sudo apt-get install -y apache2 apache2-dev apache2-mpm-prefork curl vim git libapache2-mod-wsgi postgresql libpq-dev postgresql-server-dev-all python python-dev python-pip
 ```
+* apache: webserver
+* apache2-dev: python_mod needs this
+* apache2-mpm-prefork: unknown
 * curl: used to download from the internet
 * vim: used to edit files in terminal
 * git: used to download code from github repositories
 * postgresql: the database that stores the information
+* libapache2-mod-wsgi: installed for wsgi
 * libpq-dev: needed to install psycopg2 database adapater
 * postgresql-server-dev-all: includes all postgres stuff needed; includes postgresql-server-dev-X.Y, which is needed to install psycopg2 database adapater
 * python: code language that django uses
@@ -46,6 +50,7 @@ Create a database
 Make changemaker owner of that database
 ```
 sudo -u postgres psql -c "CREATE USER changemaker;";
+sudo -u postgres psql -c "CREATE USER 'www-data';";
 sudo -u postgres psql -c "CREATE DATABASE horizon;"
 sudo -u postgres psql -c "ALTER DATABASE horizon OWNER TO changemaker;"
 ```
@@ -87,4 +92,23 @@ python ~/hercules/apodemus/manage.py createsuperuser;
 ####Run the Development Server
 ```
 python ~/hercules/apodemus/manage.py runserver
+```
+##### Set up WSGI
+```
+sudo a2enmod wsgi
+```
+
+####Copy Over Apache2 Config File to Site-Enabled Directory
+```
+sudo cp /home/changemaker/hercules/crowdfunder.conf /etc/apache2/sites-available/crowdfunder.conf
+```
+
+####Create Symbolic Link
+```
+sudo ln -s /etc/apache2/sites-available/crowdfunder.conf /etc/apache2/sites-enabled/crowdfunder.conf
+```
+
+####Restart Apache
+```
+sudo service apache2 restart
 ```

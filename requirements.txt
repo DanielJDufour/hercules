@@ -1,4 +1,5 @@
 beautifulsoup4
 django
+pillow
 psycopg2
-python-social-auth==0.7.2
+python-social-auth
