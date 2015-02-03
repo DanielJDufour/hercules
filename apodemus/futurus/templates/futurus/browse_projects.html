@@ -1,0 +1,18 @@
+{% extends "futurus/base.html" %}
+{% block content %}
+{% load staticfiles %}
+<script src="{% static 'js/search.js' %}"></script>
+<div class="browse browse_projects">
+<h1>Browse Projects</h1></br>
+</br>
+<h5 style="font-weight: bold; color: rgb(80,80,80)">All Projects</h5>
+{% for project in projects %}
+<a href="{% url 'project' project.slug %}">
+<div class="card proj">
+    <img src="{{project.steps.all.0.pictures.all.0.pic.url}}">
+    <h3 class="bottombar">{{project.title}}</h3>
+</div>
+</a>
+{% endfor %}
+</div><!-- end .middle -->
+{% endblock %}

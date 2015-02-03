@@ -8,8 +8,13 @@ import futurus
 urlpatterns = patterns(
     url(r'^futurus/', include('futurus.urls')),
     url(r'^$', views.index, name='index'),
+    url(r'^about$', views.about, name='about'),
     url(r'^account$', views.account, name='account'),
+    url(r'^advise$', views.advise, name='advise'),
+    url(r'^browse_organizations$', views.browse_organizations, name='browse_organizations'),
     url(r'^browse_people/', views.browse_people, name='browse_people'),
+    url(r'^browse_projects/', views.browse_projects, name='browse_projects'),
+    url(r'^change_language$', views.change_language, name='change_language'),
     url('^create_organization$', views.create_organization, name='create_organization'),
     url('^create_profile$', views.create_person, name='create_person'),
     url('^create_project$', views.create_project, name='create_project'),
@@ -31,6 +36,7 @@ urlpatterns = patterns(
     url('', include('social.apps.django_app.urls', namespace='social')),
     url('', include('django.contrib.auth.urls', namespace='auth')),
     url(r'^tasks$', views.tasks, name='tasks'),
+    url(r'^translate$', views.translate, name='translate'),
 ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 """
 if settings.DEBUG:

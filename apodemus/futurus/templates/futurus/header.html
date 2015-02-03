@@ -10,58 +10,60 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
         </button>
-        <a class="navbar-brand" href="{% url 'index' %}">{{zone}} Crowdfunder</a>
+        <a class="navbar-brand" href="{% url 'index' %}">{{texts_header.title}}</a>
     </div>
 
     <!-- Collect the nav links, forms, and other content for toggling -->
 
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
         <ul class="nav navbar-nav">
-            {% if user.is_authenticated %}{% if user.person %}<li><a href="{% url 'person' user.person.slug %}">Your Public Profile</a></li>{% else %}<li><a href="{% url 'create_person' %}">Create Your Profile</a></li>{% endif %}{% endif %}
-            {% if user.person.slug %}<li><a href="{% url 'memberships' user.person.slug %}">Your Organizations</a></li>{% endif %}
+            {% if user.is_authenticated %}{% if user.person %}<li><a href="{% url 'person' user.person.slug %}">{{texts_header.your_public_profile}}</a></li>{% else %}<li><a href="{% url 'create_person' %}">{{texts_header.create_your_profile}}</a></li>{% endif %}{% endif %}
+            {% if user.person.slug %}<li><a href="{% url 'memberships' user.person.slug %}">{{texts_header.your_organizations}}</a></li>{% endif %}
             {% if user.is_authenticated %}
             <li class="dropdown">
-                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Add <span class="caret"></span></a>
+                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">{{texts_header.add}} <span class="caret"></span></a>
                  <ul class="dropdown-menu" role="menu">
-                     <li><a href="{% url 'create_organization'%}">Organization</a></li>
-                     <li><a href="{% url 'create_project' %}">Project</a></li>
+                     <li><a href="{% url 'create_organization'%}">{{texts_header.organization}}</a></li>
+                     <li><a href="{% url 'create_project' %}">{{texts_header.project}}</a></li>
                  </ul>
             </li>
             {% endif %}
             <li class="dropdown">
-                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Browse <span class="caret"></span></a>
+                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">{{texts_header.browse}} <span class="caret"></span></a>
                  <ul class="dropdown-menu" role="menu">
-                     <li><a href="#">Organizations</a></li>
-                     <li><a href="{% url 'browse_people' %}">People</a></li>
-                     <li><a href="#">Projects</a></li>
+                     <li><a href="{% url 'browse_organizations' %}">{{texts_header.organizations}}</a></li>
+                     <li><a href="{% url 'browse_people' %}">{{texts_header.people}}</a></li>
+                     <li><a href="{% url 'browse_projects' %}">{{texts_header.projects}}</a></li>
                  </ul>
              </li>
              <li class="dropdown">
-                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Find <span class="caret"></span></a>
+                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">{{texts_header.find}} <span class="caret"></span></a>
                  <ul class="dropdown-menu" role="menu">
-                     <li><a href="{% url 'find_organizations' %}">Organizations</a></li>
-                     <li><a href="{% url 'find_people' %}">People</a></li>
-                     <li><a href="{% url 'find_projects' %}">Projects</a></li>
+                     <li><a href="{% url 'find_organizations' %}">{{texts_header.organizations}}</a></li>
+                     <li><a href="{% url 'find_people' %}">{{texts_header.people}}</a></li>
+                     <li><a href="{% url 'find_projects' %}">{{texts_header.projects}}</a></li>
                  </ul>
             </li>
             <li class="dropdown">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">More <span class="caret"></span></a>
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">{{texts_header.more}} <span class="caret"></span></a>
                 <ul class="dropdown-menu" role="menu">
-                    <li><a href="#">About</a></li>
-                    <li><a href="#">Contact</a></li>
-                    {% if user.is_authenticated %}<li><a href="{% url 'tasks' %}">Tasks</a></li>{% endif %}
-                    {% if user.is_authenticated %}<li><a href="{% url 'transactions' %}">Financial History</a></li>{% endif %}
-                    {% if user.is_authenticated %}<li><a href="{% url 'account' %}">Account & Email</a></li>{% endif %}
+                    <li><a href="{% url 'about' %}">{{texts_header.about}}</a></li>
+                    <li><a href="#">{{texts_header.contact}}</a></li>
+                    {% if user.is_authenticated %}<li><a href="{% url 'tasks' %}">{{texts_header.tasks}}</a></li>{% endif %}
+                    {% if user.is_authenticated %}<li><a href="{% url 'transactions' %}">{{texts_header.financial_history}}</a></li>{% endif %}
+                    {% if user.is_authenticated %}<li><a href="{% url 'account' %}">{{texts_header.account_and_email}}</a></li>{% endif %}
+                    <li><a href="{% url 'translate' %}">{{texts_header.translate}}</a></li>
+                    <li><a href="{% url 'advise' %}">{{texts_header.advise}}</a></li>
                 </ul>
             </li>
             {% if user.is_authenticated %}
-            <li><a href="{% url 'logout' %}">Logout</a></li>
+            <li><a href="{% url 'logout' %}">{{texts_header.logout}}</a></li>
             {% else %}
              <li class="dropdown">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Join <span class="caret"></span></a>
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">{{texts_header.join}} <span class="caret"></span></a>
                 <ul class="dropdown-menu" role="menu">
-                    <li><a href="{% url 'register' %}">Register</a></li>
-                    <li><a href="{% url 'login' %}">Login</a></li>
+                    <li><a href="{% url 'register' %}">{{texts_header.register}}</a></li>
+                    <li><a href="{% url 'login' %}">{{texts_header.login}}</a></li>
                 </ul>
             </li>
             {% endif %}

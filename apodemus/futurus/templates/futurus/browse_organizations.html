@@ -1,0 +1,19 @@
+{% extends "futurus/base.html" %}
+{% block content %}
+{% load staticfiles %}
+<script src="{% static 'js/search.js' %}"></script>
+<div class="browse browse_organizations">
+<h1>Browse Organizations</h1></br>
+</br>
+<h5 style="font-weight: bold; color: rgb(80,80,80)">All Organizations</h5>
+{% for organization in organizations %}
+<a href="{% url 'organization' organization.slug %}">
+<div class="card org">
+    <img src="{{organization.logo.url}}">
+    <h3>{{organization.name}}</h3>
+    {% if organization.mission %}<p style="font-size: 10pt; max-height: 50px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{organization.mission}}</p>{% endif %}
+</div>
+</a>
+{% endfor %}
+</div><!-- end .middle -->
+{% endblock %}

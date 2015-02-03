@@ -7,21 +7,33 @@
 <a href="{% url 'person' person.slug %}">Return to Profile Page</a>
 <form id="person_form" method="post" enctype="multipart/form-data" role="form">
 {% csrf_token %}
-<div id="form-group-name" class="form-group">
+<div id="form-group-name" class="form-group half">
     <label for="id_name">Name</label>
     <input id="id_name" type="text" name="name" maxlength="100" class="form-control" placeholder="Enter your name here" required="required" value="{{person.name}}">
+</div>
+<div id="form-group-name_ar" class="form-group half">
+    <label for="id_name_ar">&#1575;&#1604;&#1573;&#1587;&#1605;</label>
+    <input id="id_name_ar" type="text" name="name_ar" maxlength="100" class="form-control" placeholder="&#1575;&#1604;&#1573;&#1587;&#1605;" value="{% if person.name_ar %}{{person.name_ar}}{% endif %}">
 </div>
 <div id="form-group-pic" class="form-group">
     <label for="id_pic">Pic</label>
     <input id="id_pic" type="file" name="pic">
 </div>
-<div id="form-group-story" class="form-group">
+<div id="form-group-story" class="form-group half">
     <label for="id_story">Story/Background</label>
     <textarea id="id_story" name="story" class="form-control">{% if person.story%}{{person.story}}{%endif%}</textarea>
 </div>
-<div id="form-group-hometown" class="form-group">
+<div id="form-group-story_ar" class="form-group half">
+    <label for="id_story_ar">&#1602;&#1589;&#1578;&#1603;</label>
+    <textarea id="id_story_ar" name="story_ar" class="form-control">{% if person.story_ar%}{{person.story_ar}}{%endif%}</textarea>
+</div>
+<div id="form-group-hometown" class="form-group half">
     <label for="id_hometown">Hometown</label>
     <input id="id_hometown" type="text" name="hometown" maxlength="100" class="form-control" placeholder="Enter your hometown here" value="{% if person.hometown %}{{person.hometown}}{% endif %}">
+</div>
+<div id="form-group-hometown_ar" class="form-group half">
+    <label for="id_hometown_ar">&#1605;&#1583;&#1610;&#1606;&#1578;&#1603;</label>
+    <input id="id_hometown_ar" type="text" name="hometown_ar" maxlength="100" class="form-control" placeholder="&#1605;&#1583;&#1610;&#1606;&#1578;&#1603;" value="{% if person.hometown_ar %}{{person.hometown_ar}}{% endif %}">
 </div>
 <div id="form-group-twitter" class="form-group">
   <label for="id_twitter">Twitter</label>
@@ -31,11 +43,13 @@
   </div>
 </div>
 <div id="form-group-facebook" class="form-group">
-    <label for="id_facebook">Facebook</label>
+    <label for="id_facebook" class="half">Facebook</label>
+    <label class="ar half">&#1575;&#1604;&#1601;&#1610;&#1587;&#1576;&#1608;&#1603;</label>
     <input type="url" class="form-control" id="id_facebook" name="facebook" placeholder="Enter the url to the Facebook page" value="{% if person.facebook.url %}{{person.facebook.url}}{% endif %}">
 </div>
 <div id="form-group-wiki" class="form-group">
-    <label for="id_wiki">Wiki</label>
+    <label for="id_wiki" class="half">Wikipedia</label>
+    <label class="ar half">&#1608;&#1610;&#1603;&#1610;&#1576;&#1610;&#1583;&#1610;&#1575;</label>
     <input type="url" class="form-control" id="id_wiki" name="wiki" placeholder="Enter the url to the Wiki page" value="{% if person.wiki.url %}{{person.wiki.url}}{% endif %}">
 </div>
 <!-- Provide a button to click to submit the form. -->

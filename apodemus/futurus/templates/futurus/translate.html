@@ -1,0 +1,41 @@
+{% extends "futurus/base.html" %}
+{% load staticfiles %}
+{% block content %}
+<div class="middle">
+<h1>Edit and Translate Text Here!</h1><br/>
+<form id="translate_form" method="post" enctype="multipart/form-data" role="form">
+{% csrf_token %}
+<div class="">
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>English</th>
+                <th>Arabic</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for text in texts %}
+            <tr>
+                <td style="width: 50%; padding: 0px;">
+                    </br>
+                    <textarea style="width: 100%; height: 100px;" name="{{text.en.id}}">{{text.en.text}}</textarea>
+                    <a href="{{text.url}}">View on Webpage</a>
+                    </br>
+                    </br>
+                </td>
+                <td style="width: 50%; padding: 0px;">
+                    </br>
+                    <textarea style="width: 100%; height: 100px;" name="{{text.ar.id}}">{{text.ar.text}}</textarea>
+                    <a href="{{text.url}}">View on Webpage</a>
+                    </br>
+                    </br>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+<div style="width: 100%; text-align: center;"><input class="btn btn-success btn-lg" type="submit" value="Save Translations"></div>
+</form>
+</div><!-- end .middle -->
+{% endblock %}

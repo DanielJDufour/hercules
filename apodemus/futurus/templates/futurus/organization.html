@@ -80,5 +80,15 @@
 
 </div><!-- end .panel-body -->
 </div><!-- end .panel -->
+
+</br></br></br>
+<div class="panel panel-default panel-success org-panel">
+<div class="panel-heading">
+<h1>Only You Can See What Follows<h1>
+</div><!-- end .panel-heading-->
+<div class="panel-body">
+<h3>Your organization page has been viewed a total of <b>{{numberOfTotalPageViews}}</b> time{% if numberOfTotalPageViews != 1 %}s{% endif %} by <b>{{numberOfUniquePageViewers}}</b> {% if numberOfUniquePageViewers == 1 %}person{% else %}people{% endif %}.</h3>
+</div><!-- end .panel-body -->
+</div><!-- end .panel -->
 </div><!-- end .middle -->
 {% endblock %}

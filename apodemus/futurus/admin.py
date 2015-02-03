@@ -1,5 +1,5 @@
 from django.contrib import admin
-from futurus.models import Donation, Donor, Facebook, Link, LinkedIn, Location, Membership, Organization, Person, Privacy, Project, Step, Task, Twitter, Video, Wiki
+from futurus import models
 
 class OrganizationAdmin(admin.ModelAdmin):
   prepopulated_fields = {'slug': ('name',)}
@@ -10,19 +10,22 @@ class ProjectAdmin(admin.ModelAdmin):
 class PersonAdmin(admin.ModelAdmin):
   prepopulated_fields = {'slug': ('name',)}
 
-admin.site.register(Donation)
-admin.site.register(Donor)
-admin.site.register(Facebook)
-admin.site.register(Link)
-admin.site.register(LinkedIn)
-admin.site.register(Location)
-admin.site.register(Membership)
-admin.site.register(Organization, OrganizationAdmin)
-admin.site.register(Person, PersonAdmin)
-admin.site.register(Privacy)
-admin.site.register(Project, ProjectAdmin)
-admin.site.register(Step)
-admin.site.register(Task)
-admin.site.register(Twitter)
-admin.site.register(Video)
-admin.site.register(Wiki)
+admin.site.register(models.Donation)
+admin.site.register(models.Donor)
+admin.site.register(models.Facebook)
+admin.site.register(models.Link)
+admin.site.register(models.LinkedIn)
+admin.site.register(models.Location)
+admin.site.register(models.Membership)
+admin.site.register(models.Organization, OrganizationAdmin)
+admin.site.register(models.PageView)
+admin.site.register(models.Person, PersonAdmin)
+admin.site.register(models.Picture)
+admin.site.register(models.Preferences)
+admin.site.register(models.Project, ProjectAdmin)
+admin.site.register(models.Step)
+admin.site.register(models.Task)
+admin.site.register(models.Text)
+admin.site.register(models.Twitter)
+admin.site.register(models.Video)
+admin.site.register(models.Wiki)

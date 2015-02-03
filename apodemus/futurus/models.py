@@ -4,8 +4,9 @@ from django.db import models
 #from django.contrib.gis.db import models as geomodels
 from django.db.models.signals import m2m_changed, post_save
 from django.contrib.auth.models import User
-import re, requests
+import os, re, requests
 from bs4 import BeautifulSoup
+#from futurus.views import __name__
 
 class Donation(models.Model):
     donor = models.ForeignKey('Donor', null=True, blank=True)
@@ -91,6 +92,7 @@ class Membership(models.Model):
 
 class Organization(models.Model):
     abbreviation = models.CharField(max_length=200, blank=True, null=True)
+    abbreviation_ar = models.CharField(max_length=200, blank=True, null=True)
     bricked = models.NullBooleanField(default=False, null=True, blank=True)
     entry_created = models.DateTimeField(auto_now_add=True)
     facebook = models.OneToOneField('Facebook', blank=True, null=True)
@@ -100,7 +102,9 @@ class Organization(models.Model):
     logo = models.ImageField(upload_to="images/logos", blank=True, null=True)
     members = models.ManyToManyField('Person', through='Membership')
     mission = models.TextField(null=True, blank=True)
+    mission_ar = models.TextField(null=True, blank=True)
     name = models.CharField(max_length=200, null=True, blank=True)
+    name_ar = models.CharField(max_length=200, null=True, blank=True)
     organization_created = models.DateField(null=True, blank=True)
     owners = models.ManyToManyField(User, blank=True, null=True)
     partners = models.ManyToManyField('Organization', blank=True)
@@ -124,18 +128,28 @@ class Organization(models.Model):
     class Meta:
         ordering = ['name']
 
+class PageView(models.Model):
+    user = models.ForeignKey(User, unique=False, blank=True, null=True)
+    session = models.CharField(max_length=200, null=True, blank=True)
+    datetime = models.DateTimeField(auto_now_add=True)
+    page = models.CharField(max_length=200, null=True, blank=True)
+
 class Person(models.Model):
     user = models.OneToOneField(User, blank=True, null=True)
     notable = models.NullBooleanField(blank=True, null=True, default=False)
     name = models.CharField(max_length=200)
+    name_ar = models.CharField(max_length=200, blank=True, null=True)
     slug = models.SlugField(unique=True)
     pic = models.ImageField(upload_to="images/biopics", blank=True, null=True)
     story = models.TextField(null=True, blank=True)
+    story_ar = models.TextField(null=True, blank=True)
     hometown = models.CharField(max_length=200, null=True, blank=True)
+    hometown_ar = models.CharField(max_length=200, null=True, blank=True)
     facebook = models.OneToOneField('Facebook', blank=True, null=True)
     linkedin = models.OneToOneField('LinkedIn', null=True, blank=True)
     twitter = models.OneToOneField('Twitter', null=True, blank=True)
     wiki = models.OneToOneField('Wiki', blank=True, null=True)
+#    wiki_ar = models.OneToOneField('Wiki', blank=True, null=True)
 
     #tasks = models.ManyToManyField('Task', blank=True)
 
@@ -148,9 +162,20 @@ class Person(models.Model):
         return self.name
     class Meta:
         ordering = ['name']
-   
-class Privacy(models.Model):
-    hidden = models.BooleanField(default=True)
+
+class Picture(models.Model):
+    pic = models.ImageField(upload_to="images/pictures", blank=True, null=True)
+    caption = models.CharField(max_length=200, null=True, blank=True)
+    date_captured = models.DateTimeField(null=True, blank=True)
+
+class Preferences(models.Model):
+    CHOICES = [("en","English"), ("ar","Arabic"),("ku","Kurdish")]
+    language = models.CharField(max_length=2, choices=CHOICES, null=True, blank=True)
+    user = models.ForeignKey(User, null=True, blank=True)
+    def __str__(self):
+        return self.user.username
+    class Meta:
+        ordering = ['user']
 
 class Project(models.Model):
     title = models.CharField(max_length=200)
@@ -179,6 +204,7 @@ class Step(models.Model):
     money_donated = models.DecimalField(max_digits=100, default=0.00,decimal_places=2)
     order = models.IntegerField(null=True, blank=True)
     percent_funded = models.DecimalField(max_digits=100, default=0.00, decimal_places=2)
+    pictures = models.ManyToManyField('Picture', blank=True)
     def __str__(self):
         return self.name
     def calc_money(self):
@@ -197,6 +223,20 @@ class Task(models.Model):
     url = models.URLField(max_length=200, null=True, blank=True)
     def __str__(self):
         return self.name
+
+class Text(models.Model):
+    CHOICES_LANGUAGE = (('en',"English"),('ar',"Arabic"))
+    language = models.CharField(choices=CHOICES_LANGUAGE, max_length=200)
+
+    name = models.CharField(max_length=200, unique=False)
+    text = models.TextField()
+
+    #CHOICES_VIEW = views
+    template = models.CharField(max_length=200)
+
+    description = models.TextField(null=True, blank=True)
+    def __str__(self):
+        return " ["+self.template + ":" + self.language + "] " + self.name
 
 class TeamMember(models.Model):
     name = models.CharField(max_length=200, null=True, blank=True)

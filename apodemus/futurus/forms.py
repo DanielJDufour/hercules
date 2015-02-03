@@ -1,6 +1,11 @@
 from futurus.models import Facebook, LinkedIn, Organization, Person, Twitter, Wiki
 from django.contrib.auth.models import User
 from django import forms
+from futurus import models
+
+class ChangeLanguageForm(forms.Form):
+    CHOICES = [("en","English"), ("ar","Arabic")]
+    language = forms.ChoiceField(choices=CHOICES, required=True)
 
 class CreateOrgForm(forms.Form):
     CHOICES = [(person.user.id, person.name) for person in Person.objects.exclude(user__isnull=True)]
@@ -55,10 +60,13 @@ class EditOrgForm(forms.Form):
 class EditPersonForm(forms.Form):
     facebook = forms.URLField(max_length=200, required=False)
     hometown = forms.CharField(max_length=200, required=False)
+    hometown_ar = forms.CharField(max_length=200, required=False)
     linkedin = forms.URLField(max_length=200, required=False)
     name = forms.CharField(max_length=200, required=True)
+    name_ar = forms.CharField(max_length=200, required=True)
     pic = forms.ImageField(required=False)
     story = forms.CharField(max_length=10000, required=False)
+    story_ar = forms.CharField(max_length=10000, required=False)
     twitter = forms.CharField(max_length=200, required=False)
     wiki = forms.URLField(required=False)
 
@@ -76,6 +84,12 @@ class PersonForm(forms.ModelForm):
     class Meta:
         model = Person
         fields = ('name', 'pic', 'story', 'hometown',)
+
+class TranslationForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        super(TranslationForm, self).__init__(*args, **kwargs)
+        for text_id in models.Text.objects.all().values_list('id', flat=True):
+            self.fields[str(text_id)] = forms.CharField(max_length=2000, required=False) 
 
 class TwitterForm(forms.ModelForm):
     class Meta:

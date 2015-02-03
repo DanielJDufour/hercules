@@ -1,0 +1,16 @@
+{% extends "futurus/base.html" %}
+{% load staticfiles %}
+{% block content %}
+<div class="middle">
+<h1>Contribute Your Wisdom Here!</h1><br/>
+<form id="form" method="post" enctype="multipart/form-data" role="form">
+{% csrf_token %}
+
+{% for key in dictOfTexts %}
+{{key}}
+{% endfor %}
+
+<div style="width: 100%; text-align: center;"><input class="btn btn-success btn-lg" type="submit" value="Click Here to Save your Edits"></div>
+</form>
+</div><!-- end .middle -->
+{% endblock %}

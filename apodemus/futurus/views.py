@@ -1,30 +1,123 @@
 from django.core.serializers.json import DjangoJSONEncoder
 from django.shortcuts import render, get_object_or_404, render_to_response
 from django.conf import settings
-from futurus.forms import CreateOrgForm, CreatePersonForm, EditOrgForm, EditPersonForm, FacebookForm, LinkedInForm, UserForm, PersonForm, WikiForm
+from futurus.forms import ChangeLanguageForm, CreateOrgForm, CreatePersonForm, EditOrgForm, EditPersonForm, FacebookForm, LinkedInForm, UserForm, PersonForm, WikiForm
 from django.template import RequestContext
 from django.template.defaultfilters import slugify
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth.decorators import login_required
-from futurus.models import Donation, Facebook, LinkedIn, Membership, Organization, Person, Project, Task, Twitter, Wiki
-import json, requests
+from futurus import forms, models
+from futurus.models import Donation, Facebook, LinkedIn, Membership, Organization, PageView, Person, Project, Task, Twitter, Wiki
+import datetime, json, requests, sys
+
+def about(request):
+    language = get_language(request)
+    return render(request, 'futurus/about.html', {'language': language, 'texts_header': get_texts("header", language), 'texts': get_texts("about", language)})
+
+def advise(request):
+
+    language = get_language(request)
+
+    if request.method == 'POST':
+        print "data", request.POST
+        form = forms.AdviseForm(data=request.POST)
+
+        if form.is_valid():
+            print "form is valid"
+            print "cleaned_data is", form.cleaned_data            
+            for text_id in form.cleaned_data:
+                print "changing text of",text_id," to ", form.cleaned_data[text_id]
+                textObj = models.Text.objects.get(id=text_id)
+                textObj.text=form.cleaned_data[text_id]
+                textObj.save()
+        else:
+            print "NOT valid is form because:"
+            print form.errors
+
+    qsOfTexts = models.Text.objects.filter(language=language).exclude(description="")
+    templates = qsOfTexts.values_list('template', flat=True).distinct()
+    print "templates are", templates
+    dictOfTexts = {}
+    listOfTexts = []
+
+    for template in templates:
+        print "for template", template
+        url = "http://localhost:8000/translate"
+        #get url for the template; don't store in db
+        if template != "":
+            textsForTemplate = qsOfTexts.filter(template=template)
+            print "     textsForTemplate is", textsForTemplate
+            dictOfTexts[template] = []
+            for text in textsForTemplate:
+                dictOfTexts[template].append({'id': text.id, 'description': text.description, 'text': text.text}) 
+
+    print "dictOfTexts is", listOfTexts
+
+
+    return render(request, 'futurus/advise.html', {'language': language, 'texts': dictOfTexts, 'texts_header': get_texts("header", language)})
 
 @login_required
 def account(request):
+    language = get_language(request)
     user = request.user
-    return render(request, 'futurus/account.html', {'zone': settings.ZONE, 'user': user})
+    return render(request, 'futurus/account.html', {'language': language, 'user': user, 'texts_header': get_texts("header", language)})
+
+def browse_organizations(request):
+    language = get_language(request)
+    organizations = Organization.objects.all().exclude(name="").exclude(logo="")
+    return render(request, 'futurus/browse_organizations.html', {'language': language, 'organizations': organizations, 'texts_header': get_texts("header", language)})
 
 def browse_people(request):
-    people = Person.objects.all()
-    return render(request, 'futurus/browse_people.html', {'zone': settings.ZONE, 'people': people})
+    language = get_language(request)
+    people = Person.objects.all().exclude(name="").exclude(user=None).exclude(pic="")
+
+    listOfDonorIds = Donation.objects.all().values_list('donor_id', flat=True)
+    donors = []
+    newUsers = []
+    activeUsers = []
+    for person in people:
+
+        # check to see if should add to donor list
+        try:
+            if person.user.donor.id in listOfDonorIds:
+                donors.append(person)
+        except Exception as e:
+            print e
+
+
+        # check to see if should to joined recently list
+        try:
+            if person.user.date_joined:
+               newUsers.append(person) 
+        except Exception as e:
+            print e
+
+
+        # check to see if active users
+        try:
+            if person.user.last_login:
+                activeUsers.append(person)
+        except: pass
+
+    return render(request, 'futurus/browse_people.html', {'language': language, 'people': people, 'donors': donors, 'newUsers': newUsers, 'activeUsers': activeUsers, 'texts_header': get_texts("header", language)})
+
+def browse_projects(request):
+    language = get_language(request)
+    projects = Project.objects.all().exclude(title="")
+    return render(request, 'futurus/browse_projects.html', {'language': language, 'projects': projects, 'texts_header': get_texts("header", language)})
 
 @login_required
 def create_organization(request):
+    language = get_language(request)
     #checks to see if a user has created a profile (i.e. person object)
     # if they haven't, they gotta do that first
     if request.user.person:
+
+        language = get_language(request)
+        texts = get_texts("create_organization", language)
+
         if request.method == 'POST':
             print "request.POST:\n", request.POST
             form = CreateOrgForm(data=request.POST)
@@ -91,7 +184,7 @@ def create_organization(request):
                 user = request.user
                 person = user.person
                 people = Person.objects.exclude(user__isnull=True).exclude(id=person.id)
-                return render(request, 'futurus/create_organization.html', {'zone': settings.ZONE, 'person': person, 'people': people, 'user': user, 'form': form})
+                return render(request, 'futurus/create_organization.html', {'language': language, 'person': person, 'people': people, 'user': user, 'form': form, 'texts': texts, 'texts_header': get_texts("header", language)})
         else:
             user = request.user
             print "user is ", user
@@ -99,13 +192,30 @@ def create_organization(request):
             print "person is ", person
             people = Person.objects.exclude(user__isnull=True).exclude(id=person.id)
             print "people is", people
-            return render(request, 'futurus/create_organization.html', {'zone': settings.ZONE, 'person': person, 'people': people, 'user': user})
+            return render(request, 'futurus/create_organization.html', {'language': language, 'person': person, 'people': people, 'user': user, 'texts': texts, 'texts_header': get_texts("header", language)})
 
+def change_language(request):
+    print "starting change_language"
+    if request.method == 'POST':
+        print "request.method == 'POST'"
+        form = ChangeLanguageForm(data=request.POST)
+        if form.is_valid():
+            print "form.cleaned_data is", form.cleaned_data
+            newLanguage = form.cleaned_data['language']
+            if request.user.is_authenticated():
+                preferences = models.Preferences.objects.get_or_create(user = request.user)[0]
+                preferences.language = newLanguage
+                preferences.save()
+            else:
+                request.session['language'] = newLanguage 
 
+    ## reload page here, so page in new language pops up
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 @login_required
 def create_person(request):
     print "checking to see if user has created a person (i.e. profile)"
+    language = get_language(request)
     if Person.objects.filter(user=request.user):
         return HttpResponseRedirect("/people/"+request.user.person.slug+"/edit")
     else:
@@ -158,17 +268,18 @@ def create_person(request):
                 print form.errors
                 people = Person.objects.all()
                 orgs = Organization.objects.all()
-                return render(request, 'futurus/create_person.html', {'zone': settings.ZONE, 'people': people, 'orgs': orgs, 'form': form})
+                return render(request, 'futurus/create_person.html', {'language': language, 'people': people, 'orgs': orgs, 'form': form})
 
         else:
             people = Person.objects.all()
             orgs = Organization.objects.all()
-            return render(request, 'futurus/create_person.html', {'zone': settings.ZONE, 'people': people, 'orgs': orgs})
+            return render(request, 'futurus/create_person.html', {'language': language, 'people': people, 'orgs': orgs, 'texts_header': get_texts("header", language)})
 
 
 
 @login_required
 def create_project(request):
+    language = get_language(request)
     #checks to see if a user has created a profile (i.e. person object)
     # if they haven't, they gotta do that first
     if request.user.person:
@@ -227,26 +338,62 @@ def create_project(request):
             person = request.user.person
             people = Person.objects.all()
             orgs = Organization.objects.all()
-            return render(request, 'futurus/create_project.html', {'zone': settings.ZONE, 'person': person, 'people': people, 'orgs': orgs})
+            return render(request, 'futurus/create_project.html', {'language': language, 'person': person, 'people': people, 'orgs': orgs, 'texts_header': get_texts("header", language)})
 
+
+def get_language(request):
+    if request.user.is_authenticated():
+        preferences = models.Preferences.objects.get(user=request.user)
+        if preferences.language is None:
+            if "language" in request.session:
+                preferences.language = request.session['language']
+            else:
+                preferences.language = "en"
+            preferences.save()
+        return preferences.language
+    else:
+        if "language" in request.session:
+            return request.session['language']
+        else:
+            request.session['language'] = "en"
+            return request.session['language']
+       
+    return request.session['language']
+
+def get_texts(nameOfTemplate, language):
+    # unfortunately, there's no way in python to get method name you're in
+    texts_qs = models.Text.objects.filter(template=nameOfTemplate, language=language)
+    texts = {}
+    for text in texts_qs:
+        texts[str(text.name)] = text.text.encode("utf-8")
+    #print "texts are ", texts
+    return texts
 
 def index(request):
-    print "\ndef index(request):\n"
+    #print "requ is", request
+    #print "self is", dir(sys.modules[__name__])
     user = request.user
+    language = get_language(request)
     numberOfUsers = User.objects.count()
+    numberOfOrganizations = Organization.objects.count()
+    numberOfDonations = Donation.objects.count()
+    numberOfCompleteTasks = 0
+    numberOfIncompleteTasks = 0
     if user.is_authenticated():
         calculateTasks(user)
         tasks = Task.objects.filter(user=user)
         numberOfCompleteTasks = len(tasks.filter(completed=True))
-        print "numberOfCompleteTasks = ", numberOfCompleteTasks
         numberOfIncompleteTasks = len(tasks.filter(completed=False))
-        return render(request, 'futurus/index.html', {'zone': settings.ZONE, 'numberOfUsers': numberOfUsers, 'numberOfIncompleteTasks': numberOfIncompleteTasks, 'numberOfCompleteTasks': numberOfCompleteTasks})
-    else:
-        return render(request, 'futurus/index.html', {'zone': settings.ZONE, 'numberOfUsers': numberOfUsers})
+
+    texts = get_texts("index", language)
+    texts_header = get_texts("header", language)
+
+    return render(request, 'futurus/index.html', {'numberOfUsers': numberOfUsers, 'numberOfIncompleteTasks': numberOfIncompleteTasks, 'numberOfCompleteTasks': numberOfCompleteTasks, 'numberOfOrganizations': numberOfOrganizations, 'numberOfDonations': numberOfDonations, 'language': language, 'texts': texts, 'texts_header': texts_header, 'texts_header': get_texts("header", language)})
 
 
 @login_required
-def edit_organization(request, slug):
+def edit_organization(request, slug): 
+    language = get_language(request)
     #checks to see if a user has created a profile (i.e. person object)
     # if they haven't, they gotta do that first
     organization = Organization.objects.get(slug=slug)
@@ -328,40 +475,17 @@ def edit_organization(request, slug):
                 print form.errors
                 person = user.person
                 people = Person.objects.exclude(user__isnull=True).exclude(id=person.id)
-                return render(request, 'futurus/edit_organization.html', {'zone': settings.ZONE, 'person': person, 'people': people, 'user': user, 'form': form, 'organization': organization})
+                return render(request, 'futurus/edit_organization.html', {'language': language, 'person': person, 'people': people, 'user': user, 'form': form, 'organization': organization, 'texts_header': get_texts("header", language)})
         else:
             person = user.person
             print "person is ", person
             people = Person.objects.exclude(user__isnull=True).exclude(id=person.id)
             print "people is", people
-            return render(request, 'futurus/edit_organization.html', {'zone': settings.ZONE, 'person': person, 'people': people, 'user': user, 'organization': organization})
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+            return render(request, 'futurus/edit_organization.html', {'language': language, 'person': person, 'people': people, 'user': user, 'organization': organization, 'texts_header': get_texts("header", language)})
 
 @login_required
 def edit_person(request, slug):
+    language = get_language(request)
     person = get_object_or_404(Person, slug=slug)
     print "person is ", person
     
@@ -374,9 +498,13 @@ def edit_person(request, slug):
             print "request.POST is", request.POST
             form = EditPersonForm(data=request.POST)
             if form.is_valid():
+                print "form.cleaned_data is", form.cleaned_data
                 person.name = form.cleaned_data['name']
+                person.name_ar = form.cleaned_data['name_ar']
                 person.story = form.cleaned_data['story']
+                person.story_ar = form.cleaned_data['story_ar']
                 person.hometown = form.cleaned_data['hometown']
+                person.hometown_ar = form.cleaned_data['hometown_ar']
                 person.save()
                 if 'pic' in request.FILES:
                     person.pic = request.FILES['pic']
@@ -420,32 +548,47 @@ def edit_person(request, slug):
                 print form.errors
         else:
             form = EditPersonForm()
-        return render(request, 'futurus/edit_person.html', {'zone': settings.ZONE, 'person': person, 'form': form})
+        return render(request, 'futurus/edit_person.html', {'language': language, 'person': person, 'form': form, 'texts_header': get_texts("header", language)})
     else: #this isn't the current user's profile
         return HttpResponseRedirect("/people/"+slug)
 
 def find_organizations(request):
+    language = get_language(request)
     organizations = Organization.objects.all()
-    return render(request, 'futurus/find_organizations.html', {'zone': settings.ZONE, 'organizations': organizations})
+    return render(request, 'futurus/find_organizations.html', {'language': language, 'organizations': organizations, 'texts_header': get_texts("header", language)})
 
 def find_projects(request):
+    language = get_language(request)
     projects = Project.objects.all()
-    return render(request, 'futurus/find_projects.html', {'projects': projects})
+    return render(request, 'futurus/find_projects.html', {'language': language, 'texts_header': get_texts("header", language)})
 
 def find_people(request):
+    language = get_language(request)
     people = Person.objects.all()
-    return render(request, 'futurus/find_people.html', {'people': people})
+    return render(request, 'futurus/find_people.html', {'language': language, 'people': people, 'texts_header': get_texts("header", language)})
 
+@login_required
 def memberships(request, slug):
+    language = get_language(request)
+    texts = get_texts("memberships", language)
+
     person = get_object_or_404(Person, slug=slug)
     memberships = Membership.objects.filter(person=person)
     print "memberships are ", memberships
-    return render(request, 'futurus/memberships.html', {'zone': settings.ZONE, 'memberships': memberships})
+    return render(request, 'futurus/memberships.html', {'memberships': memberships, 'language': language, 'texts': texts, 'texts_header': get_texts("header", language)})
 
 
 def organization(request, slug):
+    language = get_language(request)
     organization = get_object_or_404(Organization, slug=slug)
-    return render(request, 'futurus/organization.html', {'zone': settings.ZONE, 'organization': organization, 'user': request.user})
+    user = request.user
+    request.session.session_key
+    PageView.objects.create(user=user, page=request.path, session=request.session.session_key)
+    pageViews = PageView.objects.filter(page=request.path)
+    numberOfTotalPageViews = len(pageViews)
+    numberOfUniquePageViewers = len(pageViews.values_list('user', flat=True).distinct())
+    print numberOfUniquePageViewers
+    return render(request, 'futurus/organization.html', {'language': language, 'organization': organization, 'user': user, 'numberOfTotalPageViews': numberOfTotalPageViews, 'numberOfUniquePageViewers': numberOfUniquePageViewers, 'texts_header': get_texts("header", language)})
 
 def json_organizations(request):
    # data = {}
@@ -454,6 +597,7 @@ def json_organizations(request):
     return HttpResponse(json.dumps(data, cls=DjangoJSONEncoder), content_type='application/json')
 
 def project(request, slug):
+    language = get_language(request)
     project = get_object_or_404(Project, slug=slug)
     project.calc_money()
     steps = project.steps.all()
@@ -466,15 +610,17 @@ def project(request, slug):
     print "donations are ", donations
     donors = list(set([donation.donor for donation in donations]))
     print "donors are", donors
-    return render(request, 'futurus/project.html', {'zone': settings.ZONE, 'project': project, 'donors': donors})
+    return render(request, 'futurus/project.html', {'language': language, 'project': project, 'donors': donors, 'texts_header': get_texts("header", language)})
 
 def person(request, slug):
+    language = get_language(request)
+    request.session.language = 'en'
     person = get_object_or_404(Person, slug=slug)
-    #organizations = person.organization_set.all
-    return render(request, 'futurus/person.html', {'zone': settings.ZONE, 'person': person})
+    return render(request, 'futurus/person.html', {'language': language, 'person': person, 'language': request.session.language, 'texts_header': get_texts("header", language)})
 
 
 def register(request):
+    language = get_language(request)
     # Like before, get the request's context.
     context = RequestContext(request)
 
@@ -490,17 +636,23 @@ def register(request):
 
         # If the two forms are valid...
         if user_form.is_valid():
+            email = user_form.cleaned_data['email']
+            print "email is ", email
+            print User.objects.filter(email=email).count()
+            print User.objects.filter(username=email).count()
 
-            if len(User.objects.filter(email=user_form.cleaned_data['email'])) > 0:
+            if User.objects.filter(email=email).count() > 0 or User.objects.filter(username=email).count() > 0:
+
                 print "already used email"
                 print type(user_form.errors)
                 user_form.add_error('email', "That email is already being used.")
             else:
 
                 # Save the user's form data to the database.
-                user = user_form.save()
+                print "will now try to save user_form"
+                user = user_form.save(commit=False)
 
-                # Now we hash the password with the set_password method.
+                print " Now we hash the password with the set_password method."
                 # Once hashed, we can update the user object.
                 user.set_password(user.password)
                 user.username = user.email
@@ -528,16 +680,64 @@ def register(request):
     # Render the template depending on the context.
     return render_to_response(
             'futurus/register.html',
-            {'form': user_form, 'registered': registered},
+            {'form': user_form, 'language': language, 'registered': registered, 'texts_header': get_texts("header", language)},
             context)
 
+def translate(request):
+
+    language = get_language(request)
+
+    if request.method == 'POST':
+        print "data", request.POST
+        form = forms.TranslationForm(data=request.POST)
+
+        if form.is_valid():
+            print "form is valid"
+            print "cleaned_data is", form.cleaned_data            
+            for text_id in form.cleaned_data:
+                print "changing text of",text_id," to ", form.cleaned_data[text_id]
+                textObj = models.Text.objects.get(id=text_id)
+                textObj.text=form.cleaned_data[text_id]
+                textObj.save()
+        else:
+            print "NOT valid is form because:"
+            print form.errors
+
+    qsOfTexts = models.Text.objects.all()
+    templates = qsOfTexts.values_list('template', flat=True).distinct()
+    print "templates are", templates
+    languages = qsOfTexts.values_list('language', flat=True).distinct()
+    dictOfTexts = {}
+    listOfTexts = []
+
+    for template in templates:
+        url = "http://localhost:8000/translate"
+        #get url for the template; don't store in db
+        if template != "":
+            names = qsOfTexts.filter(template=template).values_list('name', flat=True).distinct()
+            for name in names:
+                print "for name ", name
+                name_en_obj = qsOfTexts.get_or_create(template=template, name=name, language='en')[0]
+                name_ar_obj = qsOfTexts.get_or_create(template=template, name=name, language='ar')[0]
+
+                listOfTexts.append({'template:name': template+":"+name, 'en': {'id': name_en_obj.id, 'text': name_en_obj.text}, 'ar': {'id': name_ar_obj.id, 'text':name_ar_obj.text}})
+ 
+    print "listOfTExts is", listOfTexts
+
+
+    #return something like this: 
+    # [{"name": [{"en": "...", "ar": "..."}]}]
+    return render(request, 'futurus/translate.html', {'language': language, 'texts': listOfTexts, 'names': names, 'texts_header': get_texts("header", language)})
+
 def transactions(request):
+    language = get_language(request)
     donations = Donation.objects.filter(donor=request.user.donor)
     print "donations are ", donations
-    return render(request, 'futurus/transactions.html', {'zone': settings.ZONE, 'donations': donations})
+    return render(request, 'futurus/transactions.html', {'language': language, 'donations': donations, 'texts_header': get_texts("header", language)})
 
 
 def user_login(request):
+    language = get_language(request)
     # Like before, obtain the context for the user's request.
     context = RequestContext(request)
 
@@ -570,7 +770,7 @@ def user_login(request):
         if request.user.is_authenticated():
             return HttpResponseRedirect('/')
         else:
-            return render_to_response('futurus/login.html', {}, context)
+            return render_to_response('futurus/login.html', {'language': language, 'texts_header': get_texts("header", language)}, context)
 
 
 # Use the login_required() decorator to ensure only those logged in can access the view.
@@ -583,6 +783,7 @@ def user_logout(request):
     return HttpResponseRedirect('/')
 
 def tasks(request):
+    language = get_language(request)
     user = request.user
     calculateTasks(user)
     tasks = Task.objects.filter(user=user)
@@ -591,7 +792,7 @@ def tasks(request):
     print "tasks_incomplete is", tasks_incomplete
     tasks_completed = tasks.filter(completed=True)
     print "tasks_completed is", tasks_completed
-    return render(request, 'futurus/tasks.html', {'zone': settings.ZONE, 'tasks_incomplete': tasks_incomplete, 'tasks_completed': tasks_completed})
+    return render(request, 'futurus/tasks.html', {'language': language, 'tasks_incomplete': tasks_incomplete, 'tasks_completed': tasks_completed, 'texts_header': get_texts("header", language)})
 
 
 def calculateTasks(user):

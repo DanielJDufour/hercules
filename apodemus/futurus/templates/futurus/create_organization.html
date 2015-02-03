@@ -3,27 +3,7 @@
 {% block content %}
 <div class="middle">
 <h1>Create your Organization Here!</h1><br/>
-{{ form.non_field_errors }}
-{% if form.errors %}
-<div class="alert alert-danger">
-    <h3>Errors</h3>
-    <ul>
-    {% for field in form %}
-    {% if field.errors %}
-        <li>
-            {{field.label_tag}}
-            <ul>
-            {% for error in field.errors %}
-                <li><a href="#{{field.id_for_label}}" class="alert-link">{{error}}</a></li>
-            {% endfor %}
-            </ul>
-        </li>
-    {% endif %}
-{% endfor %}
-</ul>
-</div>
-{% endif %}
- 
+{% include 'futurus/errors.html' %}
 <form id="person_form" method="post" enctype="multipart/form-data" role="form">
 {% csrf_token %}
 <div id="form-group-name" class="form-group">
@@ -88,7 +68,7 @@
 </br></br>
 <div id="form-group-mission" class="form-group">
     <label for="id_mission">Mission</label>
-    <p class="help-block">Write your mission statement below.  Your mission statement says what is the goal of the organization.  It is important to provide one because it is common practice and donors expect one.  Organizations that have mission statements receive <b>X</b> more in donations.</p>
+    <p class="help-block">{{texts.mission}}</p>
     <textarea type="url" class="form-control" id="id_mission" name="mission" placeholder="Enter your organization's mission statement">{{form.mission.value}}</textarea>
 </div>
 
@@ -103,7 +83,7 @@
 
 <div id="form-group-organization_created" class="form-group">
     <label for="id_organization_created">Founding Date</label>
-    <p class="help-block">Enter the year that your organization was founded.  Donors expect this and it make your organization appear more authentic.</p>
+    <p class="help-block">{{texts.founding_date}}</p>
     <input id="id_organization_created" type="text" name="organization_created" class="form-control" value="{{form.organization_created.value}}">
 </div>
 
@@ -126,7 +106,7 @@
 </br></br>
 <div id="form-group-linkedin" class="form-group">
     <label for="id_linkedin">LinkedIn</label>
-    <p class="help-block">LinkedIn is basically the Facebook for the professional world.  It is used by many people in the Western World.  You should create an organization here.  It will give you legitimacy.  Organizations that have LinkedIn pages receive X times more money. Make sure I do the math to control for things, so I'm not just doing correlation bullshit</p>
+    <p class="help-block">{{texts.linkedin}}</p>
     <input type="url" class="form-control" id="id_linkedin" name="linkedin" placeholder="Enter the url to your organization's LinkedIn" value="{{form.linkedin.value}}">
 </div>
 
@@ -136,7 +116,7 @@
 </br></br>
 <div id="form-group-wiki" class="form-group">
     <label for="id_wiki">Wiki</label>
-    <p class="help-block">If you have a Wikipedia page, definitely link to it.  If you don't know what Wikipedia is, don't worry about this now</p>
+    <p class="help-block">{{texts.wiki}}</p>
     <input type="url" class="form-control" id="id_wiki" name="wiki" placeholder="Enter the url to the Wiki page" value="{{form.wiki.value}}">
 </div>
 
@@ -145,7 +125,7 @@
 </br></br>
 <div id="form-group-links" class="form-group">
     <label for="id_links">Links</label>
-    <p class="help-block">Add links to external websites, including news articles or mentions on other websites.  This helps to increase your legitimacy in the eyes of donors.</p>
+    <p class="help-block">{{texts.links}}</p>
     <div class="input-group input-group-link">
         <input type="url" class="form-control" id="id_links" name="links" placeholder="Enter the url here" value="">
         <div class="input-group-addon btn-danger">Delete Link</div>

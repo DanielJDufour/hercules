@@ -4,8 +4,13 @@
 <div class="middle">
 <div class="panel panel-default panel-primary org-panel">
 <div class="panel-heading">
-    <h1>{{ person.name }}</h1>
-    {% if user.is_authenticated and user == person.user %}<a style="color: white;" href="{% url 'edit_person' person.slug %}">Edit Profile</a>{% endif %}
+    {% if language == "en" %}<h1>{{ person.name }}</h1>
+    {% elif language == "ar" %}<h1 class="ar">{{ person.name_ar }}</h1>{% endif %}
+    {% if user.is_authenticated and user == person.user %}
+    {% if language == "en" %}<a style="color: white;" href="{% url 'edit_person' person.slug %}">Edit Profile</a>
+    {% elif language == "ar" %}<a style="color: white;" href="{% url 'edit_person' person.slug %}" class="ar">Edit Profile(inarabic)</a>
+    {% endif %}
+{% endif %}
 </div>
 <div class="panel-body">
 </br>
@@ -36,11 +41,20 @@
 </a><!-- end of social-wrapper -->
 {% endif %}
 
+{% if language == "en" %}
 {% if person.hometown %}
 </br>
 <h4>Hometown</h4>
 <div class="well">{{person.hometown}}</div>
 {% endif %}
+{% elif language == "ar" %}
+{% if person.hometown_ar %}
+</br>
+<h4 class="ar">&#1605;&#1583;&#1610;&#1606;&#1578;&#1603;</h4>
+<div class="well ar">{{person.hometown_ar}}</div>
+{% endif %}
+{% endif %}
+
 
 {% if person.story %}
 </br>

@@ -11,28 +11,7 @@ To create your profile, click <a href={% url 'create_person' %}>here</a>.
 To return to the main page, click <a href="{% url 'index' %}">here</a>.
 </p>
 {% else %}
-
-{{ form.non_field_errors }}
-{% if form.errors %}
-<div class="alert alert-danger">
-    <h3>Errors</h3>
-    <ul>
-    {% for field in form %}
-    {% if field.errors %}
-        <li>
-            {{field.label_tag}}
-            <ul>
-            {% for error in field.errors %}
-                <li><a href="#{{field.id_for_label}}" class="alert-link">{{error}}</a></li>
-            {% endfor %}
-            </ul>
-        </li>
-    {% endif %}
-{% endfor %}
-</ul>
-</div>
-{% endif %}
-
+{% include "futurus/errors.html" %}
 <h1>Register here!</h1><br/>
 <form id="user_form" method="post" action="/futurus/register/" enctype="multipart/form-data" role="form">
 {% csrf_token %}

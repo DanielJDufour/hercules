@@ -1,0 +1,23 @@
+<div class="alert alert-danger">
+
+<form id="user_form" method="post" action="/change_language" enctype="multipart/form-data" role="form">
+{% csrf_token %}
+
+{% if language == "en" or language == None %}
+
+    <p>You are currently using this website in English.</p>
+    <input type="hidden" name="language" value="ar">
+    <input type='submit' name='submit' value='&#1575;&#1604;&#1593;&#1585;&#1576;&#1610;&#1577;' class="btn btn-primary">
+
+{% elif language == "ar" %}
+
+    <p>&#1575;&#1604;&#1593;&#1585;&#1576;&#1610;&#1577;</p>
+    <input type="hidden" name="language" value="en">
+    <input type='submit' name='submit' value='Change to English' class="btn btn-primary">
+
+
+
+{% endif %}
+</form>
+
+</div>

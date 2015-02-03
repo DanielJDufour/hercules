@@ -3,7 +3,9 @@
 {% load staticfiles %}
 <script src="{% static 'js/search.js' %}"></script>
 <div class="middle">
-<h1>Your Organizations</h1></br>
+{{texts}}
+{{texts.your_organizations}}
+<h1>{{texts.your_organizations}}</h1></br>
 </br>
 <div class="table-responsive">
 <table class="table table-striped table-bordered table-hover">
